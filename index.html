@@ -2,98 +2,73 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>CRIS SYSTEM</title>
+<title>CRIS UI</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header>
-<h1>CRIS SYSTEM</h1>
+<div class="container">
 
-<nav>
-<button onclick="trocarAba('ficha')">Ficha</button>
-<button onclick="trocarAba('inventario')">Inventário</button>
-<button onclick="trocarAba('dados')">Dados</button>
-<button onclick="trocarAba('combate')">Combate</button>
-<button onclick="abrirADM()">██</button>
-</nav>
-</header>
+<!-- LADO ESQUERDO -->
+<div class="left">
 
-<main>
+<h2 id="nomeDisplay">Personagem</h2>
 
-<section id="ficha" class="aba ativa">
 <input id="nome" placeholder="Nome">
 <input id="classe" placeholder="Classe">
-<input id="nivel" type="number" value="1">
 
-<input id="for" placeholder="FOR">
-<input id="des" placeholder="DES">
-<input id="con" placeholder="CON">
-<input id="int" placeholder="INT">
-<input id="sab" placeholder="SAB">
+<h3>Atributos</h3>
 
-<select id="armadura">
-<option value="0">Sem armadura</option>
-<option value="2">Leve</option>
-<option value="4">Média</option>
-<option value="6">Pesada</option>
-</select>
-
-<div class="barra"><div id="barraExs"></div></div>
+<div class="atributos">
+  <input id="for" type="number" placeholder="FOR">
+  <input id="agi" type="number" placeholder="AGI">
+  <input id="int" type="number" placeholder="INT">
+  <input id="pre" type="number" placeholder="PRE">
+  <input id="vig" type="number" placeholder="VIG">
+</div>
 
 <button onclick="calcular()">Atualizar</button>
-<button onclick="salvarFicha()">Salvar</button>
 
-<div id="resultado"></div>
-</section>
+<div id="stats"></div>
 
-<section id="inventario" class="aba">
+</div>
 
-<h3>Drogas</h3>
+<!-- LADO DIREITO -->
+<div class="right">
+
+<div class="tabs">
+<button onclick="trocarAba('combate')">Combate</button>
+<button onclick="trocarAba('inventario')">Inventário</button>
+<button onclick="trocarAba('dados')">Dados</button>
+</div>
+
+<div id="combate" class="aba ativa">
+<h3>Combate</h3>
+
+<button onclick="novoAtaque()">Novo Ataque</button>
+<div id="log"></div>
+
+</div>
+
+<div id="inventario" class="aba">
+<h3>Inventário</h3>
+
 <button onclick="usarDroga('hemorred')">Hemorred</button>
 <button onclick="usarDroga('carmine')">Carmine</button>
-<button onclick="usarDroga('pulse')">Red Pulse</button>
 
-<h3>Itens</h3>
-<button onclick="addItem('Condensador')">Condensador</button>
-<button onclick="addItem('Ampola')">Ampola</button>
-<button onclick="addItem('Medalhão')">Medalhão</button>
+<ul id="itens"></ul>
+</div>
 
-<ul id="listaItens"></ul>
-<div id="efeitos"></div>
-
-</section>
-
-<section id="dados" class="aba">
-<button onclick="rolar(6)">d6</button>
+<div id="dados" class="aba">
+<h3>Dados</h3>
 <button onclick="rolar(20)">d20</button>
-<button onclick="rolar(100)">d100</button>
-<h3 id="resultadoDado"></h3>
-</section>
+<p id="resultadoDado"></p>
+</div>
 
-<section id="combate" class="aba">
+</div>
 
-<input id="hpPlayer" placeholder="HP Player">
-<input id="atkPlayer" placeholder="ATK Player">
+</div>
 
-<input id="hpEnemy" placeholder="HP Inimigo">
-<input id="atkEnemy" placeholder="ATK Inimigo">
-
-<button onclick="iniciarCombate()">Iniciar Combate</button>
-
-<div id="logCombate"></div>
-
-</section>
-
-<section id="criaturas" class="aba">
-<h2>ADM</h2>
-<ul id="listaCriaturas"></ul>
-<button onclick="interagirAnomalia()">Testar Anomalia</button>
-</section>
-
-</main>
-
-<script src="/socket.io/socket.io.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
