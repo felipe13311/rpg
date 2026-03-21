@@ -1,7 +1,5 @@
-// ===== SOCKET =====
 const socket = io();
 
-// ===== NAVEGAÇÃO =====
 function abrir(id){
 document.querySelectorAll(".tela").forEach(t=>t.classList.remove("ativa"));
 document.getElementById(id).classList.add("ativa");
@@ -13,126 +11,127 @@ let agenteAtual = null;
 
 // ===== ROLAGEM =====
 function rolarDado(){
-let formula = document.getElementById("formulaDado").value.toLowerCase();
-let match = formula.match(/(\d+)d(\d+)([+-]\d+)?/);
+let f = formulaDado.value.toLowerCase();
+let m = f.match(/(\d+)d(\d+)([+-]\d+)?/);
 
-if(!match) return alert("Use: 1d20+5");
+if(!m) return alert("Use 1d20+5");
 
-let qtd = +match[1];
-let faces = +match[2];
-let bonus = +(match[3] || 0);
+let total=0;
+for(let i=0;i<m[1];i++) total+=Math.floor(Math.random()*m[2])+1;
+total += +(m[3]||0);
 
-let total = 0;
-let rolls = [];
-
-for(let i=0;i<qtd;i++){
-let r = Math.floor(Math.random()*faces)+1;
-rolls.push(r);
-total += r;
-}
-
-total += bonus;
-
-logRolagens.innerHTML += `<p>🎲 ${formula}: [${rolls}] = ${total}</p>`;
+logRolagens.innerHTML += `<p>🎲 ${f} = ${total}</p>`;
 socket.emit("ataque", total);
 }
 
-socket.on("receberAtaque",(dano)=>{
-logRolagens.innerHTML += `<p style="color:orange">🔥 Dano recebido: ${dano}</p>`;
+socket.on("receberAtaque",d=>{
+logRolagens.innerHTML += `<p style="color:red">🔥 ${d} dano</p>`;
 });
 
 // ===== AGENTES =====
 function criarAgente(){
-let nome = nomeAgente.value;
-let classe = classeAgente.value;
-
-if(!nome) return;
-
-agentes.push({nome,classe,ficha:{}});
+agentes.push({nome:nomeAgente.value,classe:classeAgente.value,full:{inventario:[]}});
 salvarAgentes();
 renderAgentes();
 }
 
 function renderAgentes(){
 listaAgentes.innerHTML="";
-
 agentes.forEach((a,i)=>{
-let li = document.createElement("li");
-
-li.innerHTML = `
-${a.nome} (${a.classe})
-<button onclick="abrirFicha(${i})">Abrir</button>
-`;
-
-listaAgentes.appendChild(li);
+listaAgentes.innerHTML+=`
+<li>${a.nome} (${a.classe})
+<button onclick="abrirFicha(${i})">Ficha</button>
+</li>`;
 });
 }
 
 function abrirFicha(i){
-agenteAtual = i;
-abrir("fichaAgente");
+agenteAtual=i;
+abrir("agenteFull");
 
-let a = agentes[i];
-tituloFicha.innerText = a.nome;
+let a=agentes[i];
+nomeAgenteFull.innerText=a.nome;
 
-forca.value = a.ficha.forca || "";
-agilidade.value = a.ficha.agilidade || "";
-intelecto.value = a.ficha.intelecto || "";
-vida.value = a.ficha.vida || "";
+forcaFull.value=a.full.forca||0;
+agiFull.value=a.full.agi||0;
+intFull.value=a.full.int||0;
+preFull.value=a.full.pre||0;
 
-mostrarFichaAgente();
+renderItens();
+calcularTudo();
 }
 
-function salvarFichaAgente(){
-let a = agentes[agenteAtual];
+// ===== CALCULOS AUTOMATICOS =====
+function calcularTudo(){
+let forca=+forcaFull.value||0;
+let agi=+agiFull.value||0;
+let int=+intFull.value||0;
+let pre=+preFull.value||0;
 
-a.ficha = {
-forca: forca.value,
-agilidade: agilidade.value,
-intelecto: intelecto.value,
-vida: vida.value
+// derivados estilo ordem
+let vida = 20 + forca*5;
+let pe = 10 + pre*5;
+
+// pericias automáticas
+lutaCalc.innerText = forca;
+pontariaCalc.innerText = agi;
+furtividadeCalc.innerText = agi;
+percepcaoCalc.innerText = int;
+
+// mostrar
+vidaCalc.innerText = "HP: "+vida;
+peCalc.innerText = "PE: "+pe;
+}
+
+// recalcular ao digitar
+["forcaFull","agiFull","intFull","preFull"].forEach(id=>{
+document.getElementById(id).addEventListener("input",calcularTudo);
+});
+
+// ===== TESTES =====
+function teste(tipo){
+let val = +document.getElementById(tipo+"Full").value||0;
+let roll = Math.floor(Math.random()*20)+1;
+let total = roll+val;
+
+logRolagens.innerHTML += `<p>🎲 ${tipo} = ${total}</p>`;
+}
+
+// ===== INVENTARIO =====
+function addItem(){
+let a=agentes[agenteAtual];
+a.full.inventario.push(itemNome.value);
+itemNome.value="";
+renderItens();
+salvarAgentes();
+}
+
+function renderItens(){
+let a=agentes[agenteAtual];
+listaItens.innerHTML="";
+a.full.inventario.forEach((it,i)=>{
+listaItens.innerHTML+=`<li>${it}</li>`;
+});
+}
+
+// ===== SALVAR =====
+function salvarAgenteFull(){
+let a=agentes[agenteAtual];
+
+a.full={
+forca:+forcaFull.value,
+agi:+agiFull.value,
+int:+intFull.value,
+pre:+preFull.value,
+inventario:a.full.inventario
 };
 
 salvarAgentes();
-mostrarFichaAgente();
-}
-
-function mostrarFichaAgente(){
-let a = agentes[agenteAtual];
-
-viewFicha.innerHTML = `
-<p>FOR: ${a.ficha.forca}</p>
-<p>AGI: ${a.ficha.agilidade}</p>
-<p>INT: ${a.ficha.intelecto}</p>
-<p>HP: ${a.ficha.vida}</p>
-`;
+alert("Salvo");
 }
 
 function salvarAgentes(){
 localStorage.setItem("agentes",JSON.stringify(agentes));
-}
-
-// ===== FICHA PLAYER =====
-function salvarFicha(){
-let ficha = {
-nome: nomeFicha.value,
-classe: classeFicha.value,
-hp: hpFicha.value
-};
-
-localStorage.setItem("ficha",JSON.stringify(ficha));
-mostrarFicha();
-}
-
-function mostrarFicha(){
-let f = JSON.parse(localStorage.getItem("ficha"));
-if(!f) return;
-
-previewFicha.innerHTML = `
-<h3>${f.nome}</h3>
-<p>${f.classe}</p>
-<p>HP: ${f.hp}</p>
-`;
 }
 
 // ===== CAMPANHAS =====
@@ -147,51 +146,65 @@ renderCampanhas();
 function renderCampanhas(){
 listaCampanhas.innerHTML="";
 campanhas.forEach(c=>{
-let li=document.createElement("li");
-li.innerText = c.nome;
-listaCampanhas.appendChild(li);
+listaCampanhas.innerHTML+=`<li>${c.nome}</li>`;
 });
 }
 
-// ===== MAPA =====
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
+// ===== MAPA (OWLBEAR STYLE) =====
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
 
-let tokens = [];
-let dragging = null;
+let tokens=[];
+let scale=1,offsetX=0,offsetY=0;
 
-canvas.addEventListener("click", e=>{
+canvas.onclick=e=>{
 tokens.push({x:e.offsetX,y:e.offsetY});
 draw();
-});
+};
 
-canvas.addEventListener("mousedown", e=>{
-tokens.forEach(t=>{
-if(Math.hypot(t.x-e.offsetX,t.y-e.offsetY)<10) dragging=t;
-});
-});
-
-canvas.addEventListener("mousemove", e=>{
-if(dragging){
-dragging.x=e.offsetX;
-dragging.y=e.offsetY;
+canvas.onwheel=e=>{
+scale+=e.deltaY*-0.001;
 draw();
-}
-});
-
-canvas.addEventListener("mouseup", ()=>dragging=null);
+};
 
 function draw(){
+ctx.setTransform(scale,0,0,scale,offsetX,offsetY);
 ctx.clearRect(0,0,canvas.width,canvas.height);
+
+// grid
+for(let x=0;x<800;x+=50){
+ctx.beginPath();
+ctx.moveTo(x,0);
+ctx.lineTo(x,400);
+ctx.stroke();
+}
+
+for(let y=0;y<400;y+=50){
+ctx.beginPath();
+ctx.moveTo(0,y);
+ctx.lineTo(800,y);
+ctx.stroke();
+}
+
+// tokens
 tokens.forEach(t=>{
 ctx.beginPath();
 ctx.arc(t.x,t.y,10,0,Math.PI*2);
-ctx.fillStyle="red";
 ctx.fill();
 });
+}
+
+// mapa imagem
+let img=new Image();
+
+function carregarMapa(){
+let url=prompt("URL do mapa:");
+if(!url)return;
+
+img.src=url;
+img.onload=()=>ctx.drawImage(img,0,0,800,400);
 }
 
 // INIT
 renderAgentes();
 renderCampanhas();
-mostrarFicha();
