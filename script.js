@@ -1,185 +1,270 @@
+// ================================
+// INIT
+// ================================
+
 const socket = io();
 
-function abrir(id){
-document.querySelectorAll(".tela").forEach(t=>t.classList.remove("ativa"));
+const telas = document.querySelectorAll(".tela");
+const log = document.getElementById("log");
+
+// ================================
+// NAVEGAÇÃO
+// ================================
+
+document.querySelectorAll("[data-go]").forEach(btn=>{
+btn.addEventListener("click",()=>{
+let id = btn.getAttribute("data-go");
+
+telas.forEach(t=>t.classList.remove("ativa"));
 document.getElementById(id).classList.add("ativa");
+});
+});
+
+// ================================
+// SISTEMA DE DADOS (REAL)
+// ================================
+
+function rolar(expressao){
+
+let match = expressao.match(/(\d+)d(\d+)([+-]\d+)?/);
+
+if(!match) return "Erro";
+
+let qtd = parseInt(match[1]);
+let faces = parseInt(match[2]);
+let bonus = parseInt(match[3] || 0);
+
+let total = 0;
+let rolls = [];
+
+for(let i=0;i<qtd;i++){
+let r = Math.floor(Math.random()*faces)+1;
+rolls.push(r);
+total += r;
 }
 
-// ===== DADOS =====
+total += bonus;
+
+return {total,rolls,bonus};
+}
+
+// botão rolar
+document.getElementById("btnRolar").addEventListener("click",()=>{
+let exp = document.getElementById("inputDado").value;
+
+let r = rolar(exp);
+
+if(r==="Erro") return alert("Formato inválido");
+
+log.innerHTML += `<p>🎲 ${exp} → ${r.rolls} = ${r.total}</p>`;
+
+socket.emit("roll",r.total);
+});
+
+// multiplayer
+socket.on("roll",(v)=>{
+log.innerHTML += `<p style="color:orange">Outro jogador: ${v}</p>`;
+});
+
+// ================================
+// AGENTES
+// ================================
+
 let agentes = JSON.parse(localStorage.getItem("agentes")) || [];
-let agenteAtual = null;
+let atual = null;
 
-// ===== ROLAGEM =====
-function rolarDado(){
-let f = formulaDado.value.toLowerCase();
-let m = f.match(/(\d+)d(\d+)([+-]\d+)?/);
+const lista = document.getElementById("listaAgentes");
 
-if(!m) return alert("Use 1d20+5");
-
-let total=0;
-for(let i=0;i<m[1];i++) total+=Math.floor(Math.random()*m[2])+1;
-total += +(m[3]||0);
-
-logRolagens.innerHTML += `<p>🎲 ${f} = ${total}</p>`;
-socket.emit("ataque", total);
-}
-
-socket.on("receberAtaque",d=>{
-logRolagens.innerHTML += `<p style="color:red">🔥 ${d} dano</p>`;
-});
-
-// ===== AGENTES =====
-function criarAgente(){
-agentes.push({nome:nomeAgente.value,classe:classeAgente.value,full:{inventario:[]}});
-salvarAgentes();
-renderAgentes();
-}
-
-function renderAgentes(){
-listaAgentes.innerHTML="";
-agentes.forEach((a,i)=>{
-listaAgentes.innerHTML+=`
-<li>${a.nome} (${a.classe})
-<button onclick="abrirFicha(${i})">Ficha</button>
-</li>`;
-});
-}
-
-function abrirFicha(i){
-agenteAtual=i;
-abrir("agenteFull");
-
-let a=agentes[i];
-nomeAgenteFull.innerText=a.nome;
-
-forcaFull.value=a.full.forca||0;
-agiFull.value=a.full.agi||0;
-intFull.value=a.full.int||0;
-preFull.value=a.full.pre||0;
-
-renderItens();
-calcularTudo();
-}
-
-// ===== CALCULOS AUTOMATICOS =====
-function calcularTudo(){
-let forca=+forcaFull.value||0;
-let agi=+agiFull.value||0;
-let int=+intFull.value||0;
-let pre=+preFull.value||0;
-
-// derivados estilo ordem
-let vida = 20 + forca*5;
-let pe = 10 + pre*5;
-
-// pericias automáticas
-lutaCalc.innerText = forca;
-pontariaCalc.innerText = agi;
-furtividadeCalc.innerText = agi;
-percepcaoCalc.innerText = int;
-
-// mostrar
-vidaCalc.innerText = "HP: "+vida;
-peCalc.innerText = "PE: "+pe;
-}
-
-// recalcular ao digitar
-["forcaFull","agiFull","intFull","preFull"].forEach(id=>{
-document.getElementById(id).addEventListener("input",calcularTudo);
-});
-
-// ===== TESTES =====
-function teste(tipo){
-let val = +document.getElementById(tipo+"Full").value||0;
-let roll = Math.floor(Math.random()*20)+1;
-let total = roll+val;
-
-logRolagens.innerHTML += `<p>🎲 ${tipo} = ${total}</p>`;
-}
-
-// ===== INVENTARIO =====
-function addItem(){
-let a=agentes[agenteAtual];
-a.full.inventario.push(itemNome.value);
-itemNome.value="";
-renderItens();
-salvarAgentes();
-}
-
-function renderItens(){
-let a=agentes[agenteAtual];
-listaItens.innerHTML="";
-a.full.inventario.forEach((it,i)=>{
-listaItens.innerHTML+=`<li>${it}</li>`;
-});
-}
-
-// ===== SALVAR =====
-function salvarAgenteFull(){
-let a=agentes[agenteAtual];
-
-a.full={
-forca:+forcaFull.value,
-agi:+agiFull.value,
-int:+intFull.value,
-pre:+preFull.value,
-inventario:a.full.inventario
-};
-
-salvarAgentes();
-alert("Salvo");
-}
-
-function salvarAgentes(){
+function salvar(){
 localStorage.setItem("agentes",JSON.stringify(agentes));
 }
 
-// ===== CAMPANHAS =====
-let campanhas = JSON.parse(localStorage.getItem("campanhas")) || [];
+function render(){
+lista.innerHTML="";
 
-function criarCampanha(){
-campanhas.push({nome:nomeCampanha.value});
-localStorage.setItem("campanhas",JSON.stringify(campanhas));
-renderCampanhas();
-}
+agentes.forEach((a,i)=>{
+let li = document.createElement("li");
 
-function renderCampanhas(){
-listaCampanhas.innerHTML="";
-campanhas.forEach(c=>{
-listaCampanhas.innerHTML+=`<li>${c.nome}</li>`;
+li.innerHTML = `
+${a.nome} (${a.classe})
+<button data-open="${i}">Abrir</button>
+`;
+
+lista.appendChild(li);
+});
+
+// abrir ficha
+document.querySelectorAll("[data-open]").forEach(btn=>{
+btn.onclick = ()=>{
+abrirFicha(btn.dataset.open);
+};
 });
 }
 
-// ===== MAPA (OWLBEAR STYLE) =====
-const canvas=document.getElementById("canvas");
-const ctx=canvas.getContext("2d");
+document.getElementById("btnCriarAgente").onclick=()=>{
+let nome = document.getElementById("nomeAgente").value;
+let classe = document.getElementById("classeAgente").value;
 
-let tokens=[];
-let scale=1,offsetX=0,offsetY=0;
+agentes.push({
+nome,
+classe,
+ficha:{forca:0,agi:0,int:0,pre:0,inv:[]}
+});
 
-canvas.onclick=e=>{
+salvar();
+render();
+};
+
+// ================================
+// FICHA COMPLETA
+// ================================
+
+function abrirFicha(i){
+atual = i;
+
+let a = agentes[i];
+
+document.getElementById("tituloFicha").innerText = a.nome;
+
+// preencher
+["forca","agi","int","pre"].forEach(k=>{
+document.getElementById(k).value = a.ficha[k];
+});
+
+renderInv();
+calc();
+
+document.querySelector('[data-go="ficha"]').click();
+}
+
+// ================================
+// CALCULOS AUTOMATICOS
+// ================================
+
+function calc(){
+
+let f = +forca.value;
+let a = +agi.value;
+let i = +int.value;
+let p = +pre.value;
+
+let vida = 20 + f*5;
+let pe = 10 + p*5;
+
+hp.innerText = "HP: "+vida;
+pe.innerText = "PE: "+pe;
+}
+
+// atualizar em tempo real
+["forca","agi","int","pre"].forEach(id=>{
+document.getElementById(id).addEventListener("input",calc);
+});
+
+// ================================
+// INVENTARIO
+// ================================
+
+function renderInv(){
+
+let a = agentes[atual];
+
+inv.innerHTML="";
+
+a.ficha.inv.forEach((item,i)=>{
+let li = document.createElement("li");
+li.innerHTML = `${item} <button data-del="${i}">X</button>`;
+inv.appendChild(li);
+});
+
+document.querySelectorAll("[data-del]").forEach(btn=>{
+btn.onclick=()=>{
+agentes[atual].ficha.inv.splice(btn.dataset.del,1);
+renderInv();
+salvar();
+};
+});
+}
+
+document.getElementById("addItem").onclick=()=>{
+let item = document.getElementById("item").value;
+
+agentes[atual].ficha.inv.push(item);
+
+renderInv();
+salvar();
+};
+
+// ================================
+// SALVAR FICHA
+// ================================
+
+document.getElementById("salvarFicha").onclick=()=>{
+
+let a = agentes[atual];
+
+a.ficha.forca = +forca.value;
+a.ficha.agi = +agi.value;
+a.ficha.int = +int.value;
+a.ficha.pre = +pre.value;
+
+salvar();
+alert("Salvo!");
+};
+
+// ================================
+// MAPA (OWLBEAR STYLE)
+// ================================
+
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+let tokens = [];
+let dragging = null;
+let scale = 1;
+
+canvas.addEventListener("click",e=>{
 tokens.push({x:e.offsetX,y:e.offsetY});
 draw();
-};
+});
 
-canvas.onwheel=e=>{
-scale+=e.deltaY*-0.001;
+canvas.addEventListener("mousedown",e=>{
+tokens.forEach(t=>{
+if(Math.hypot(t.x-e.offsetX,t.y-e.offsetY)<10){
+dragging = t;
+}
+});
+});
+
+canvas.addEventListener("mousemove",e=>{
+if(dragging){
+dragging.x = e.offsetX;
+dragging.y = e.offsetY;
 draw();
-};
+}
+});
+
+canvas.addEventListener("mouseup",()=>dragging=null);
+
+canvas.addEventListener("wheel",e=>{
+scale += e.deltaY * -0.001;
+scale = Math.max(0.5,Math.min(2,scale));
+draw();
+});
 
 function draw(){
-ctx.setTransform(scale,0,0,scale,offsetX,offsetY);
+
+ctx.setTransform(scale,0,0,scale,0,0);
 ctx.clearRect(0,0,canvas.width,canvas.height);
 
 // grid
 for(let x=0;x<800;x+=50){
 ctx.beginPath();
 ctx.moveTo(x,0);
-ctx.lineTo(x,400);
+ctx.lineTo(x,500);
 ctx.stroke();
 }
 
-for(let y=0;y<400;y+=50){
+for(let y=0;y<500;y+=50){
 ctx.beginPath();
 ctx.moveTo(0,y);
 ctx.lineTo(800,y);
@@ -194,17 +279,8 @@ ctx.fill();
 });
 }
 
-// mapa imagem
-let img=new Image();
-
-function carregarMapa(){
-let url=prompt("URL do mapa:");
-if(!url)return;
-
-img.src=url;
-img.onload=()=>ctx.drawImage(img,0,0,800,400);
-}
-
+// ================================
 // INIT
-renderAgentes();
-renderCampanhas();
+// ================================
+
+render();
