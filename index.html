@@ -2,55 +2,69 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>CRIS PLATFORM</title>
+<title>BLOOD MON</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- NAVBAR -->
 <header class="navbar">
+  <h1>BLOOD MON</h1>
+
   <span onclick="mudarPagina('agentes')">Agentes</span>
   <span onclick="mudarPagina('campanhas')">Campanhas</span>
-  <span onclick="mudarPagina('ameacas')">Ameaças</span>
-  <span onclick="mudarPagina('homebrew')">Homebrew</span>
-  <span onclick="mudarPagina('patente')">Patente</span>
 </header>
 
-<!-- CONTEÚDO -->
 <main>
 
+<!-- AGENTES -->
 <section id="agentes" class="pagina ativa">
-  <h2>Agentes</h2>
-  <p>Gerencie personagens</p>
+
+<h2>Agentes</h2>
+
+<input id="nomeAgente" placeholder="Nome">
+<input id="classeAgente" placeholder="Classe">
+<input type="file" id="avatarInput">
+
+<select id="role">
+<option value="jogador">Jogador</option>
+<option value="mestre">Mestre</option>
+</select>
+
+<button onclick="criarAgente()">Criar</button>
+
+<ul id="listaAgentes"></ul>
+
 </section>
 
+<!-- CAMPANHAS -->
 <section id="campanhas" class="pagina">
-  <h2>Campanhas</h2>
 
-  <canvas id="mapa" width="800" height="500"></canvas>
+<h2>Campanha</h2>
 
-</section>
+<input id="nomeCampanha" placeholder="Nome">
+<button onclick="criarCampanha()">Criar</button>
 
-<section id="ameacas" class="pagina">
-  <h2>Ameaças</h2>
-</section>
+<ul id="listaCampanhas"></ul>
 
-<section id="homebrew" class="pagina">
-  <h2>Homebrew</h2>
-</section>
+<canvas id="mapa" width="800" height="400"></canvas>
 
-<section id="patente" class="pagina">
-  <h2>Patente</h2>
+<!-- CHAT -->
+<div class="chat">
+<div id="chatBox"></div>
+<input id="chatInput">
+<button onclick="enviarChat()">Enviar</button>
+</div>
+
+<!-- DADOS -->
+<div class="dice">
+<input id="diceInput" placeholder="2d20+5">
+<button onclick="rolarDado()">Rolar</button>
+<ul id="logDados"></ul>
+</div>
+
 </section>
 
 </main>
-
-<!-- DADOS -->
-<div class="diceBox">
-  <input id="customDice" placeholder="Ex: 2d20+5">
-  <button onclick="rolarCustom()">Rolar</button>
-  <p id="resultadoDado"></p>
-</div>
 
 <script src="script.js"></script>
 </body>
