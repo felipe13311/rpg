@@ -1,45 +1,53 @@
-.circulo {
-  width:200px;
-  margin:auto;
-  stroke:red;
-  fill:none;
+body{
+background:#0a0a0f;
+color:white;
+font-family:Arial;
+margin:0;
 }
 
-.base{
-stroke:red;
-stroke-width:2;
+/* NAVBAR */
+.navbar{
+display:flex;
+gap:20px;
+padding:15px;
+border-bottom:2px solid purple;
+background:#0f0f1a;
 }
 
-.barra{
-width:200px;
-height:15px;
+.navbar span{
+cursor:pointer;
+opacity:0.7;
+transition:0.2s;
+}
+
+.navbar span:hover{
+opacity:1;
+color:#a855f7;
+}
+
+/* PÁGINAS */
+.pagina{
+display:none;
+padding:20px;
+}
+
+.ativa{
+display:block;
+}
+
+/* MAPA */
+#mapa{
 background:#111;
-border:1px solid red;
-margin:5px auto;
+border:2px solid #333;
+cursor:crosshair;
 }
 
-.barra div{
-height:100%;
-width:50%;
-background:red;
-transition:width 0.5s ease;
-}
-
-.pericias{
-position:absolute;
-left:220px;
-top:0;
-height:100%;
-overflow:auto;
-width:250px;
-border-left:1px solid #333;
-}
-
-#statusBox{
+/* DADOS */
+.diceBox{
 position:fixed;
 bottom:10px;
 right:10px;
-border:1px solid red;
-padding:10px;
 background:#111;
+padding:10px;
+border:1px solid purple;
 }
