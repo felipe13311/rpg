@@ -1,50 +1,57 @@
-<div class="left">
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>CRIS PLATFORM</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-<h2>ATRIBUTOS</h2>
+<!-- NAVBAR -->
+<header class="navbar">
+  <span onclick="mudarPagina('agentes')">Agentes</span>
+  <span onclick="mudarPagina('campanhas')">Campanhas</span>
+  <span onclick="mudarPagina('ameacas')">Ameaças</span>
+  <span onclick="mudarPagina('homebrew')">Homebrew</span>
+  <span onclick="mudarPagina('patente')">Patente</span>
+</header>
 
-<svg viewBox="0 0 200 200" class="circulo">
-  <circle cx="100" cy="100" r="80" class="base"/>
-  <text x="90" y="30">FOR</text>
-  <text x="150" y="80">AGI</text>
-  <text x="120" y="170">INT</text>
-  <text x="40" y="170">PRE</text>
-  <text x="20" y="80">VIG</text>
-</svg>
+<!-- CONTEÚDO -->
+<main>
 
-<div class="barras">
-  <div>VIDA <div class="barra"><div id="vidaBar"></div></div></div>
-  <div>SANIDADE <div class="barra"><div id="sanBar"></div></div></div>
-  <div>ESFORÇO <div class="barra"><div id="esfBar"></div></div></div>
+<section id="agentes" class="pagina ativa">
+  <h2>Agentes</h2>
+  <p>Gerencie personagens</p>
+</section>
+
+<section id="campanhas" class="pagina">
+  <h2>Campanhas</h2>
+
+  <canvas id="mapa" width="800" height="500"></canvas>
+
+</section>
+
+<section id="ameacas" class="pagina">
+  <h2>Ameaças</h2>
+</section>
+
+<section id="homebrew" class="pagina">
+  <h2>Homebrew</h2>
+</section>
+
+<section id="patente" class="pagina">
+  <h2>Patente</h2>
+</section>
+
+</main>
+
+<!-- DADOS -->
+<div class="diceBox">
+  <input id="customDice" placeholder="Ex: 2d20+5">
+  <button onclick="rolarCustom()">Rolar</button>
+  <p id="resultadoDado"></p>
 </div>
 
-</div>
-
-<!-- PERÍCIAS -->
-<div class="pericias">
-
-<h2>PERÍCIAS</h2>
-
-<ul id="listaPericias"></ul>
-
-</div>
-
-<!-- ATAQUES -->
-<div id="combate" class="aba">
-
-<h3>Ataques</h3>
-
-<input id="nomeAtk" placeholder="Nome do ataque">
-<input id="danoAtk" placeholder="Dano">
-<input id="custoAtk" placeholder="Custo">
-
-<button onclick="criarAtaque()">Criar</button>
-
-<ul id="listaAtaques"></ul>
-
-</div>
-
-<!-- STATUS -->
-<div id="statusBox">
-<h3>Status</h3>
-<ul id="statusLista"></ul>
-</div>
+<script src="script.js"></script>
+</body>
+</html>
