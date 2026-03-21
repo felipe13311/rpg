@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>Blood Moon</title>
+<title>Blood Moon VTT</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,90 +12,68 @@
 <!-- MENU -->
 <section id="menu" class="tela ativa">
 <h1>BLOOD MOON</h1>
+
 <div class="menuBox">
-<button onclick="abrir('dashboard')">Dashboard</button>
-<button onclick="abrir('agentes')">Agentes</button>
-<button onclick="abrir('campanhas')">Campanhas</button>
-<button onclick="abrir('mapa')">Mapa</button>
+<button data-go="dashboard">Dashboard</button>
+<button data-go="agentes">Agentes</button>
+<button data-go="mapa">Mapa</button>
+<button data-go="campanhas">Campanhas</button>
 </div>
 </section>
 
 <!-- DASHBOARD -->
 <section id="dashboard" class="tela">
-<button class="voltar" onclick="abrir('menu')">←</button>
+<button class="voltar" data-go="menu">←</button>
 
 <h2>🎲 Rolagem</h2>
-<input id="formulaDado" placeholder="1d20+5">
-<button onclick="rolarDado()">Rolar</button>
+<input id="inputDado" placeholder="1d20+5">
+<button id="btnRolar">Rolar</button>
 
-<div id="logRolagens"></div>
+<div id="log"></div>
 </section>
 
 <!-- AGENTES -->
 <section id="agentes" class="tela">
-<button class="voltar" onclick="abrir('menu')">←</button>
+<button class="voltar" data-go="menu">←</button>
 
 <h2>Agentes</h2>
 
-<input id="nomeAgente" placeholder="Nome">
-<input id="classeAgente" placeholder="Classe">
-<button onclick="criarAgente()">Criar</button>
+<input id="nomeAgente">
+<input id="classeAgente">
+<button id="btnCriarAgente">Criar</button>
 
 <ul id="listaAgentes"></ul>
 </section>
 
-<!-- FICHA COMPLETA -->
-<section id="agenteFull" class="tela">
-<button class="voltar" onclick="abrir('agentes')">←</button>
+<!-- FICHA -->
+<section id="ficha" class="tela">
+<button class="voltar" data-go="agentes">←</button>
 
-<h2 id="nomeAgenteFull"></h2>
+<h2 id="tituloFicha"></h2>
 
 <h3>Atributos</h3>
-<input id="forcaFull" placeholder="Força">
-<input id="agiFull" placeholder="Agilidade">
-<input id="intFull" placeholder="Intelecto">
-<input id="preFull" placeholder="Presença">
+<input id="forca">
+<input id="agi">
+<input id="int">
+<input id="pre">
 
-<h3>Derivados (AUTO)</h3>
-<p id="vidaCalc"></p>
-<p id="peCalc"></p>
-
-<h3>Perícias (AUTO)</h3>
-<p>Luta: <span id="lutaCalc"></span></p>
-<p>Pontaria: <span id="pontariaCalc"></span></p>
-<p>Furtividade: <span id="furtividadeCalc"></span></p>
-<p>Percepção: <span id="percepcaoCalc"></span></p>
+<h3>Derivados</h3>
+<p id="hp"></p>
+<p id="pe"></p>
 
 <h3>Inventário</h3>
-<input id="itemNome" placeholder="Item">
-<button onclick="addItem()">Adicionar</button>
-<ul id="listaItens"></ul>
+<input id="item">
+<button id="addItem">Adicionar</button>
+<ul id="inv"></ul>
 
-<h3>🎲 Testes</h3>
-<button onclick="teste('forca')">FOR</button>
-<button onclick="teste('agi')">AGI</button>
-<button onclick="teste('int')">INT</button>
-<button onclick="teste('pre')">PRE</button>
-
-<button onclick="salvarAgenteFull()">Salvar</button>
-</section>
-
-<!-- CAMPANHAS -->
-<section id="campanhas" class="tela">
-<button class="voltar" onclick="abrir('menu')">←</button>
-
-<input id="nomeCampanha" placeholder="Nome">
-<button onclick="criarCampanha()">Criar</button>
-
-<ul id="listaCampanhas"></ul>
+<button id="salvarFicha">Salvar</button>
 </section>
 
 <!-- MAPA -->
 <section id="mapa" class="tela">
-<button class="voltar" onclick="abrir('menu')">←</button>
+<button class="voltar" data-go="menu">←</button>
 
-<button onclick="carregarMapa()">Carregar Mapa</button>
-<canvas id="canvas" width="800" height="400"></canvas>
+<canvas id="canvas" width="800" height="500"></canvas>
 </section>
 
 <script src="script.js"></script>
