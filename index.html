@@ -1,1 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>BLOOD MOON VTT • ORDEM PARANORMAL × LOBOTOMY</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <script src="/socket.io/socket.io.js"></script>
 
+    <!-- MENU -->
+    <section id="menu" class="tela ativa">
+        <h1>🌕 BLOOD MOON</h1>
+        <h3 style="color:#800000;">Facility da Ordem • Extração de Anomalias</h3>
+        <div class="menuBox">
+            <button data-go="dashboard">🎲 Dashboard</button>
+            <button data-go="agentes">👤 Agentes</button>
+            <button data-go="mapa">🗺️ Mapa da Contenção</button>
+            <button data-go="campanhas">📜 Campanhas</button>
+        </div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="tela">
+        <button class="voltar" data-go="menu">← VOLTAR</button>
+        <h2>🎲 ROLAGEM PARANORMAL</h2>
+        <input id="inputDado" placeholder="1d20+5 ou 2d10-3">
+        <button id="btnRolar">ROLAR DADOS</button>
+        <div id="log"></div>
+    </section>
+
+    <!-- AGENTES -->
+    <section id="agentes" class="tela">
+        <button class="voltar" data-go="menu">← VOLTAR</button>
+        <h2>👤 AGENTES DA ORDEM</h2>
+        <input id="nomeAgente" placeholder="Nome do Agente">
+        <input id="classeAgente" placeholder="Classe (ex: Supressor, Extrator)">
+        <button id="btnCriarAgente">CRIAR AGENTE</button>
+        <ul id="listaAgentes"></ul>
+    </section>
+
+    <!-- FICHA -->
+    <section id="ficha" class="tela">
+        <button class="voltar" data-go="agentes">← VOLTAR</button>
+        <h2 id="tituloFicha"></h2>
+        <h3>ATRIBUTOS</h3>
+        <input id="forca" placeholder="Força" type="number">
+        <input id="agi" placeholder="Agilidade" type="number">
+        <input id="int" placeholder="Inteligência" type="number">
+        <input id="pre" placeholder="Presença" type="number">
+        <h3>DERIVADOS</h3>
+        <p id="hp" style="font-size:1.4em;"></p>
+        <p id="pe" style="font-size:1.4em;"></p>
+        <h3>INVENTÁRIO / ANOMALIAS</h3>
+        <input id="item" placeholder="Item ou Anomalia">
+        <button id="addItem">ADICIONAR</button>
+        <ul id="inv"></ul>
+        <button id="salvarFicha">SALVAR FICHA NO ABISMO</button>
+    </section>
+
+    <!-- MAPA -->
+    <section id="mapa" class="tela">
+        <button class="voltar" data-go="menu">← VOLTAR</button>
+        <h2>🩸 MAPA DE CONTENÇÃO</h2>
+        <canvas id="canvas" width="800" height="500"></canvas>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
