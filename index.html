@@ -2,34 +2,26 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>BLOOD MON</title>
+<title>Blood Moon</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- MENU -->
-<header class="menu">
-<h1>BLOOD MON</h1>
+<!-- MENU PRINCIPAL -->
+<section id="menu" class="tela ativa">
+<h1>BLOOD MOON</h1>
 
-<button onclick="ir('dashboard')">Dashboard</button>
-<button onclick="ir('ficha')">Minha Ficha</button>
-<button onclick="ir('campanhas')">Campanhas</button>
-<button onclick="ir('owlbear')">Mapa</button>
-<button onclick="logout()">Sair</button>
-</header>
-
-<main>
-
-<!-- LOGIN -->
-<section id="login" class="pagina ativa">
-<h2>Login</h2>
-<input id="user" placeholder="Usuário">
-<input id="pass" type="password">
-<button onclick="login()">Entrar</button>
+<div class="menuBox">
+<button onclick="abrir('dashboard')">Dashboard</button>
+<button onclick="abrir('ficha')">Minha Ficha</button>
+<button onclick="abrir('campanhas')">Campanhas</button>
+<button onclick="abrir('mapa')">Mapa</button>
+</div>
 </section>
 
 <!-- DASHBOARD -->
-<section id="dashboard" class="pagina">
+<section id="dashboard" class="tela">
+<button class="voltar" onclick="abrir('menu')">← Voltar</button>
 
 <h2>Agentes</h2>
 <table>
@@ -45,13 +37,15 @@
 
 </section>
 
-<!-- FICHA PRIVADA -->
-<section id="ficha" class="pagina">
+<!-- FICHA -->
+<section id="ficha" class="tela">
+<button class="voltar" onclick="abrir('menu')">← Voltar</button>
+
 <h2>Minha Ficha</h2>
 
-<input id="nomeFicha">
-<input id="classeFicha">
-<input id="hpFicha">
+<input id="nomeFicha" placeholder="Nome">
+<input id="classeFicha" placeholder="Classe">
+<input id="hpFicha" placeholder="HP">
 
 <input type="file" id="gifFicha">
 
@@ -62,9 +56,12 @@
 </section>
 
 <!-- CAMPANHAS -->
-<section id="campanhas" class="pagina">
+<section id="campanhas" class="tela">
+<button class="voltar" onclick="abrir('menu')">← Voltar</button>
 
-<input id="nomeCampanha">
+<h2>Campanhas</h2>
+
+<input id="nomeCampanha" placeholder="Nome">
 <button onclick="criarCampanha()">Criar</button>
 
 <ul id="listaCampanhas"></ul>
@@ -72,11 +69,14 @@
 </section>
 
 <!-- MAPA -->
-<section id="owlbear" class="pagina">
-<canvas id="mapa" width="800" height="400"></canvas>
-</section>
+<section id="mapa" class="tela">
+<button class="voltar" onclick="abrir('menu')">← Voltar</button>
 
-</main>
+<h2>Mapa</h2>
+
+<canvas id="canvas" width="800" height="400"></canvas>
+
+</section>
 
 <script src="script.js"></script>
 </body>
