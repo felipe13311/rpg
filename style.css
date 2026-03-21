@@ -1,52 +1,61 @@
 body{
-background: radial-gradient(circle at top, #1a0000, #000);
+background:#080000;
 color:#ff3b3b;
-font-family:'Segoe UI', sans-serif;
+font-family:Arial;
 margin:0;
 }
 
-/* NAVBAR */
-.navbar{
+/* MENU */
+.menu{
 display:flex;
-align-items:center;
-gap:20px;
-padding:15px;
-background:rgba(10,0,0,0.9);
-border-bottom:1px solid red;
-box-shadow:0 0 20px red;
+gap:10px;
+padding:10px;
+background:#120000;
+border-bottom:2px solid red;
 }
 
-.navbar h1{
-color:#ff0000;
+.menu h1{
+margin-right:auto;
+color:red;
 text-shadow:0 0 10px red;
 }
 
 /* BOTÕES */
 button{
-background:linear-gradient(45deg,#300,#900);
+background:#1a0000;
 border:1px solid red;
 color:white;
-padding:8px 12px;
+padding:6px 10px;
 cursor:pointer;
-transition:0.2s;
 }
 
 button:hover{
-transform:scale(1.05);
-box-shadow:0 0 10px red;
+background:red;
 }
 
-/* INPUT */
-input{
-background:#0a0000;
+/* PÁGINAS */
+.pagina{display:none;}
+.ativa{display:block;}
+
+/* TABELAS */
+table{
+width:80%;
+margin:10px auto;
+border-collapse:collapse;
+}
+
+th,td{
 border:1px solid red;
-color:white;
-padding:6px;
+padding:8px;
+text-align:center;
 }
 
-/* CANVAS */
-canvas{
+th{
+background:#200000;
+}
+
+/* FICHA */
+#previewFicha img{
+width:100px;
 border:2px solid red;
-box-shadow:0 0 20px red;
-border-radius:10px;
 }
