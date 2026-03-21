@@ -1,70 +1,17 @@
-body{
-background:#050000;
-color:#ff2a2a;
-font-family:Arial;
-margin:0;
-text-align:center;
-}
-
-/* TELAS */
-.tela{
-display:none;
-padding:20px;
-}
-
-.ativa{
+input{
 display:block;
-}
-
-/* MENU */
-.menuBox{
-display:flex;
-flex-direction:column;
-gap:15px;
-width:200px;
-margin:auto;
-}
-
-button{
+margin:5px auto;
+padding:8px;
 background:#1a0000;
 border:1px solid red;
 color:white;
-padding:10px;
-cursor:pointer;
 }
 
-button:hover{
-background:red;
-}
-
-/* VOLTAR */
-.voltar{
-position:absolute;
-left:10px;
-top:10px;
-}
-
-/* TABELA */
-table{
-margin:auto;
-border-collapse:collapse;
-width:70%;
-}
-
-th,td{
-border:1px solid red;
-padding:8px;
-}
-
-/* FICHA */
-#previewFicha img{
-width:120px;
+#logRolagens{
+background:#100000;
+height:150px;
+overflow-y:auto;
 margin-top:10px;
-border:2px solid red;
-}
-
-/* MAPA */
-canvas{
-border:2px solid red;
-margin-top:20px;
+padding:10px;
+border:1px solid red;
 }
