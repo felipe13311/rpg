@@ -1,3 +1,22 @@
+body{
+background:#050000;
+color:#ff2a2a;
+font-family:Arial;
+text-align:center;
+}
+
+.tela{display:none;}
+.ativa{display:block;}
+
+button{
+background:#1a0000;
+border:1px solid red;
+color:white;
+padding:10px;
+margin:5px;
+cursor:pointer;
+}
+
 input{
 display:block;
 margin:5px auto;
@@ -7,10 +26,9 @@ border:1px solid red;
 color:white;
 }
 
-#logRolagens{
-background:#100000;
+#log{
 height:150px;
 overflow:auto;
-padding:10px;
 border:1px solid red;
+margin-top:10px;
 }
