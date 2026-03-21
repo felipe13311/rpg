@@ -7,12 +7,15 @@
 </head>
 <body>
 
-<header class="navbar">
+<!-- MENU -->
+<header class="menu">
 <h1>BLOOD MON</h1>
-<button onclick="logout()">Logout</button>
 
-<span onclick="mudarPagina('agentes')">Agentes</span>
-<span onclick="mudarPagina('campanhas')">Campanhas</span>
+<button onclick="ir('dashboard')">Dashboard</button>
+<button onclick="ir('ficha')">Minha Ficha</button>
+<button onclick="ir('campanhas')">Campanhas</button>
+<button onclick="ir('owlbear')">Mapa</button>
+<button onclick="logout()">Sair</button>
 </header>
 
 <main>
@@ -21,56 +24,56 @@
 <section id="login" class="pagina ativa">
 <h2>Login</h2>
 <input id="user" placeholder="Usuário">
-<input id="pass" type="password" placeholder="Senha">
+<input id="pass" type="password">
 <button onclick="login()">Entrar</button>
 </section>
 
-<!-- AGENTES -->
-<section id="agentes" class="pagina">
+<!-- DASHBOARD -->
+<section id="dashboard" class="pagina">
+
 <h2>Agentes</h2>
+<table>
+<thead><tr><th>Nome</th><th>Classe</th><th>Role</th></tr></thead>
+<tbody id="tabelaAgentes"></tbody>
+</table>
 
-<input id="nomeAgente" placeholder="Nome">
-<input id="classeAgente" placeholder="Classe">
-<input type="file" id="avatarInput">
+<h2>Campanhas</h2>
+<table>
+<thead><tr><th>Nome</th><th>Ação</th></tr></thead>
+<tbody id="tabelaCampanhas"></tbody>
+</table>
 
-<select id="role">
-<option value="jogador">Jogador</option>
-<option value="mestre">Mestre</option>
-</select>
+</section>
 
-<button onclick="criarAgente()">Criar</button>
+<!-- FICHA PRIVADA -->
+<section id="ficha" class="pagina">
+<h2>Minha Ficha</h2>
 
-<ul id="listaAgentes"></ul>
+<input id="nomeFicha">
+<input id="classeFicha">
+<input id="hpFicha">
+
+<input type="file" id="gifFicha">
+
+<button onclick="salvarFicha()">Salvar</button>
+
+<div id="previewFicha"></div>
+
 </section>
 
 <!-- CAMPANHAS -->
 <section id="campanhas" class="pagina">
 
-<input id="nomeCampanha" placeholder="Nome">
+<input id="nomeCampanha">
 <button onclick="criarCampanha()">Criar</button>
 
 <ul id="listaCampanhas"></ul>
 
-<input type="file" id="mapUpload">
+</section>
 
+<!-- MAPA -->
+<section id="owlbear" class="pagina">
 <canvas id="mapa" width="800" height="400"></canvas>
-
-<!-- TURNOS -->
-<button onclick="iniciarTurno()">Iniciar Turnos</button>
-<p id="turnoAtual"></p>
-
-<!-- CHAT -->
-<div class="chat">
-<div id="chatBox"></div>
-<input id="chatInput">
-<button onclick="enviarChat()">Enviar</button>
-</div>
-
-<!-- DADOS -->
-<input id="diceInput" placeholder="2d20+5">
-<button onclick="rolarDado()">Rolar</button>
-<ul id="logDados"></ul>
-
 </section>
 
 </main>
