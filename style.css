@@ -1,24 +1,54 @@
 body {
-  background: #0d0d0d;
-  color: #e0e0e0;
+  background: #0b0b0b;
+  color: #eaeaea;
   font-family: Arial;
   text-align: center;
 }
 
 header {
   background: #1a1a1a;
-  padding: 10px;
+  padding: 15px;
 }
 
 button {
   margin: 5px;
   padding: 10px;
   background: #2e2e2e;
-  color: white;
   border: none;
+  color: white;
   cursor: pointer;
 }
 
-.hidden {
+button:hover {
+  background: #444;
+}
+
+.aba {
   display: none;
+  padding: 20px;
+}
+
+.ativa {
+  display: block;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 150px);
+  justify-content: center;
+  gap: 10px;
+  margin: 10px;
+}
+
+input, textarea {
+  padding: 8px;
+  background: #1a1a1a;
+  border: none;
+  color: white;
+}
+
+textarea {
+  width: 300px;
+  height: 80px;
+  margin-top: 10px;
 }
