@@ -8,17 +8,25 @@
 <body>
 
 <header class="navbar">
-  <h1>BLOOD MON</h1>
+<h1>BLOOD MON</h1>
+<button onclick="logout()">Logout</button>
 
-  <span onclick="mudarPagina('agentes')">Agentes</span>
-  <span onclick="mudarPagina('campanhas')">Campanhas</span>
+<span onclick="mudarPagina('agentes')">Agentes</span>
+<span onclick="mudarPagina('campanhas')">Campanhas</span>
 </header>
 
 <main>
 
-<!-- AGENTES -->
-<section id="agentes" class="pagina ativa">
+<!-- LOGIN -->
+<section id="login" class="pagina ativa">
+<h2>Login</h2>
+<input id="user" placeholder="Usuário">
+<input id="pass" type="password" placeholder="Senha">
+<button onclick="login()">Entrar</button>
+</section>
 
+<!-- AGENTES -->
+<section id="agentes" class="pagina">
 <h2>Agentes</h2>
 
 <input id="nomeAgente" placeholder="Nome">
@@ -33,20 +41,23 @@
 <button onclick="criarAgente()">Criar</button>
 
 <ul id="listaAgentes"></ul>
-
 </section>
 
 <!-- CAMPANHAS -->
 <section id="campanhas" class="pagina">
-
-<h2>Campanha</h2>
 
 <input id="nomeCampanha" placeholder="Nome">
 <button onclick="criarCampanha()">Criar</button>
 
 <ul id="listaCampanhas"></ul>
 
+<input type="file" id="mapUpload">
+
 <canvas id="mapa" width="800" height="400"></canvas>
+
+<!-- TURNOS -->
+<button onclick="iniciarTurno()">Iniciar Turnos</button>
+<p id="turnoAtual"></p>
 
 <!-- CHAT -->
 <div class="chat">
@@ -56,11 +67,9 @@
 </div>
 
 <!-- DADOS -->
-<div class="dice">
 <input id="diceInput" placeholder="2d20+5">
 <button onclick="rolarDado()">Rolar</button>
 <ul id="logDados"></ul>
-</div>
 
 </section>
 
