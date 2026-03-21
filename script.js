@@ -1,3 +1,22 @@
+let usuarioAtual = localStorage.getItem("user");
+
+// ===== LOGIN =====
+function login(){
+let u = user.value;
+let p = pass.value;
+
+if(u && p){
+localStorage.setItem("user",u);
+usuarioAtual = u;
+mudarPagina("agentes");
+}
+}
+
+function logout(){
+localStorage.removeItem("user");
+location.reload();
+}
+
 // ===== NAVEGAÇÃO =====
 function mudarPagina(id){
 document.querySelectorAll(".pagina").forEach(p=>p.classList.remove("ativa"));
@@ -10,82 +29,57 @@ let agentes = JSON.parse(localStorage.getItem("agentes")) || [];
 function criarAgente(){
 let nome = nomeAgente.value;
 let classe = classeAgente.value;
-let role = document.getElementById("role").value;
+let role = role.value;
 
 let file = avatarInput.files[0];
 
 if(file){
 let reader = new FileReader();
-reader.onload = function(){
-let agente = {nome,classe,role,avatar:reader.result,hp:20};
-agentes.push(agente);
-salvarAgentes();
-renderAgentes();
+reader.onload = ()=>{
+agentes.push({nome,classe,role,avatar:reader.result,hp:20});
+salvarAgentes(); renderAgentes();
 }
 reader.readAsDataURL(file);
 }else{
-let agente = {nome,classe,role,hp:20};
-agentes.push(agente);
-salvarAgentes();
-renderAgentes();
+agentes.push({nome,classe,role,hp:20});
+salvarAgentes(); renderAgentes();
 }
 }
 
 function renderAgentes(){
 listaAgentes.innerHTML="";
-
 agentes.forEach((a,i)=>{
 let li=document.createElement("li");
-
-li.innerHTML = `
-<img src="${a.avatar||''}" width="30">
-${a.nome} (${a.classe}) [${a.role}]
-<button onclick="editarAgente(${i})">Editar</button>
-`;
-
+li.innerHTML=`${a.nome} (${a.role}) <button onclick="editarAgente(${i})">Editar</button>`;
 listaAgentes.appendChild(li);
 });
 }
 
 function editarAgente(i){
-let novoNome = prompt("Novo nome:", agentes[i].nome);
-let novoHP = prompt("HP:", agentes[i].hp);
-
-if(novoNome) agentes[i].nome = novoNome;
-if(novoHP) agentes[i].hp = +novoHP;
-
-salvarAgentes();
-renderAgentes();
+let hp = prompt("HP:", agentes[i].hp);
+if(hp) agentes[i].hp = +hp;
+salvarAgentes(); renderAgentes();
 }
 
 function salvarAgentes(){
-localStorage.setItem("agentes", JSON.stringify(agentes));
+localStorage.setItem("agentes",JSON.stringify(agentes));
 }
 
 // ===== CAMPANHAS =====
 let campanhas = JSON.parse(localStorage.getItem("campanhas")) || [];
-let campanhaAtual=null;
+let atual = null;
 
 function criarCampanha(){
-let nome = nomeCampanha.value;
-campanhas.push({nome,mapa:[],chat:[]});
-salvarCampanhas();
-renderCampanhas();
+campanhas.push({nome:nomeCampanha.value,mapa:[],chat:[],turno:0});
+salvarCampanhas(); renderCampanhas();
 }
 
 function renderCampanhas(){
 listaCampanhas.innerHTML="";
-
 campanhas.forEach((c,i)=>{
 let li=document.createElement("li");
 li.textContent=c.nome;
-
-li.onclick=()=>{
-campanhaAtual=i;
-desenhar();
-renderChat();
-};
-
+li.onclick=()=>{atual=i;desenhar();renderChat();}
 listaCampanhas.appendChild(li);
 });
 }
@@ -94,33 +88,65 @@ function salvarCampanhas(){
 localStorage.setItem("campanhas",JSON.stringify(campanhas));
 }
 
-// ===== MAPA + TOKENS =====
+// ===== MAPA + IMAGEM =====
 const canvas = document.getElementById("mapa");
 const ctx = canvas.getContext("2d");
+let bg = null;
 
-canvas.addEventListener("click",(e)=>{
-if(campanhaAtual===null) return;
+mapUpload.addEventListener("change", e=>{
+let file = e.target.files[0];
+let reader = new FileReader();
 
-let nome = prompt("Nome do token");
-let hp = prompt("HP");
+reader.onload = ()=>{
+bg = new Image();
+bg.src = reader.result;
+bg.onload = desenhar;
+}
 
-campanhas[campanhaAtual].mapa.push({
-x:e.offsetX,
-y:e.offsetY,
-nome,
-hp
+reader.readAsDataURL(file);
 });
 
+// ===== TOKENS DRAG =====
+let selected=null;
+
+canvas.addEventListener("mousedown", e=>{
+let x=e.offsetX,y=e.offsetY;
+
+campanhas[atual]?.mapa.forEach(t=>{
+if(Math.hypot(t.x-x,t.y-y)<10){
+selected=t;
+}
+});
+});
+
+canvas.addEventListener("mousemove", e=>{
+if(selected){
+selected.x=e.offsetX;
+selected.y=e.offsetY;
+desenhar();
+}
+});
+
+canvas.addEventListener("mouseup", ()=>selected=null);
+
+// CLICK CRIAR TOKEN
+canvas.addEventListener("dblclick", e=>{
+let nome=prompt("Nome");
+let hp=prompt("HP");
+
+campanhas[atual].mapa.push({x:e.offsetX,y:e.offsetY,nome,hp});
 salvarCampanhas();
 desenhar();
 });
 
 function desenhar(){
-ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.clearRect(0,0,800,400);
 
-if(campanhaAtual===null) return;
+if(bg) ctx.drawImage(bg,0,0,800,400);
 
-campanhas[campanhaAtual].mapa.forEach(t=>{
+if(atual===null) return;
+
+campanhas[atual].mapa.forEach(t=>{
 ctx.fillStyle="red";
 ctx.beginPath();
 ctx.arc(t.x,t.y,10,0,Math.PI*2);
@@ -132,19 +158,14 @@ ctx.fillText(t.nome+"("+t.hp+")",t.x-10,t.y-15);
 
 // ===== CHAT =====
 function enviarChat(){
-if(campanhaAtual===null) return;
-
-let msg = chatInput.value;
-
-campanhas[campanhaAtual].chat.push(msg);
-salvarCampanhas();
-renderChat();
+let msg = `[${new Date().toLocaleTimeString()}] ${usuarioAtual}: ${chatInput.value}`;
+campanhas[atual].chat.push(msg);
+salvarCampanhas(); renderChat();
 }
 
 function renderChat(){
 chatBox.innerHTML="";
-
-campanhas[campanhaAtual].chat.forEach(m=>{
+campanhas[atual].chat.forEach(m=>{
 let p=document.createElement("p");
 p.textContent=m;
 chatBox.appendChild(p);
@@ -153,15 +174,14 @@ chatBox.appendChild(p);
 
 // ===== DADOS =====
 function rolarDado(){
-let input = diceInput.value;
-
-let match = input.match(/(\d*)d(\d+)([+-]\d+)?/);
+let input=diceInput.value;
+let match=input.match(/(\d*)d(\d+)([+-]\d+)?/);
 
 if(!match) return;
 
-let qtd = match[1]||1;
-let lados = match[2];
-let mod = parseInt(match[3])||0;
+let qtd=match[1]||1;
+let lados=match[2];
+let mod=parseInt(match[3])||0;
 
 let total=0;
 
@@ -171,10 +191,23 @@ total+=Math.floor(Math.random()*lados)+1;
 
 total+=mod;
 
+let log=`${usuarioAtual}: ${input} = ${total}`;
 let li=document.createElement("li");
-li.textContent=input+" = "+total;
-
+li.textContent=log;
 logDados.appendChild(li);
+}
+
+// ===== TURNOS =====
+function iniciarTurno(){
+if(atual===null) return;
+
+let ordem = campanhas[atual].mapa;
+let turno = campanhas[atual].turno % ordem.length;
+
+turnoAtual.innerText="Turno de: "+ordem[turno].nome;
+
+campanhas[atual].turno++;
+salvarCampanhas();
 }
 
 // INIT
