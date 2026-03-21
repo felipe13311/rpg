@@ -2,44 +2,74 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Meu RPG</title>
+  <title>RPG</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <header>
-    <h1>🕯️ Meu RPG</h1>
-    <nav>
-      <button onclick="mostrar('inicio')">Início</button>
-      <button onclick="mostrar('fichas')">Fichas</button>
-      <button onclick="mostrar('bestiario')">Bestiário</button>
-    </nav>
-  </header>
+<header>
+  <h1>🕯️ Sistema RPG</h1>
+  <nav>
+    <button onclick="trocarAba('ficha')">Ficha</button>
+    <button onclick="trocarAba('dados')">Dados</button>
+  </nav>
+</header>
 
-  <main>
-    <section id="inicio">
-      <h2>Bem-vindo</h2>
-      <p>Seu mundo começa aqui...</p>
-    </section>
+<main>
 
-    <section id="fichas" class="hidden">
-      <h2>Ficha de Personagem</h2>
-      <input id="nome" placeholder="Nome">
-      <input id="forca" type="number" placeholder="Força">
-      <button onclick="salvarFicha()">Salvar</button>
+<section id="ficha" class="aba ativa">
 
-      <div id="listaFichas"></div>
-    </section>
+  <h2>Ficha de Personagem</h2>
 
-    <section id="bestiario" class="hidden">
-      <h2>Bestiário</h2>
-      <input id="criatura" placeholder="Nome da criatura">
-      <button onclick="addCriatura()">Adicionar</button>
+  <div class="grid">
+    <input id="nome" placeholder="Nome">
+    <input id="classe" placeholder="Classe">
+    <input id="raca" placeholder="Raça">
+    <input id="nivel" type="number" value="1">
+  </div>
 
-      <ul id="listaCriaturas"></ul>
-    </section>
-  </main>
+  <h3>Atributos</h3>
 
-  <script src="script.js"></script>
+  <div class="grid">
+    <input id="for" type="number" placeholder="FOR">
+    <input id="des" type="number" placeholder="DES">
+    <input id="con" type="number" placeholder="CON">
+    <input id="int" type="number" placeholder="INT">
+    <input id="sab" type="number" placeholder="SAB">
+    <input id="car" type="number" placeholder="CAR">
+  </div>
+
+  <h3>Equipamento</h3>
+
+  <div class="grid">
+    <input id="arma" placeholder="Arma principal">
+    <input id="armadura" placeholder="Armadura">
+    <input id="item1" placeholder="Item 1">
+    <input id="item2" placeholder="Item 2">
+  </div>
+
+  <textarea id="habilidade" placeholder="Habilidade Especial"></textarea>
+
+  <button onclick="calcular()">Calcular</button>
+
+  <div id="resultado"></div>
+
+</section>
+
+<section id="dados" class="aba">
+
+  <h2>Rolador de Dados</h2>
+
+  <button onclick="rolar(6)">d6</button>
+  <button onclick="rolar(20)">d20</button>
+  <button onclick="rolar(100)">d100</button>
+
+  <h3 id="resultadoDado"></h3>
+
+</section>
+
+</main>
+
+<script src="script.js"></script>
 </body>
 </html>
