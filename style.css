@@ -1,68 +1,45 @@
-body{
-background:#0b0b0b;
-color:white;
-font-family:Arial;
-margin:0;
+.circulo {
+  width:200px;
+  margin:auto;
+  stroke:red;
+  fill:none;
 }
 
-.container{
-display:flex;
-height:100vh;
+.base{
+stroke:red;
+stroke-width:2;
 }
 
-.left{
-width:30%;
+.barra{
+width:200px;
+height:15px;
 background:#111;
-padding:20px;
-border-right:1px solid #333;
+border:1px solid red;
+margin:5px auto;
 }
 
-.right{
-flex:1;
-padding:20px;
+.barra div{
+height:100%;
+width:50%;
+background:red;
+transition:width 0.5s ease;
 }
 
-input{
-display:block;
-margin:5px 0;
-padding:8px;
-width:90%;
-background:#1a1a1a;
-border:1px solid #333;
-color:white;
-}
-
-button{
-background:#1a1a1a;
-border:1px solid purple;
-color:white;
-padding:10px;
-margin:5px;
-cursor:pointer;
-transition:0.2s;
-}
-
-button:hover{
-background:purple;
-}
-
-.tabs{
-border-bottom:1px solid #333;
-margin-bottom:10px;
-}
-
-.aba{
-display:none;
-}
-
-.ativa{
-display:block;
-}
-
-#log{
-margin-top:10px;
-height:200px;
+.pericias{
+position:absolute;
+left:220px;
+top:0;
+height:100%;
 overflow:auto;
-border:1px solid #333;
+width:250px;
+border-left:1px solid #333;
+}
+
+#statusBox{
+position:fixed;
+bottom:10px;
+right:10px;
+border:1px solid red;
 padding:10px;
+background:#111;
 }
