@@ -1,85 +1,79 @@
-let vida=100;
-let san=100;
-let esforco=100;
+// TROCA DE PÁGINA
+function mudarPagina(id){
+document.querySelectorAll(".pagina").forEach(p=>p.classList.remove("ativa"));
+document.getElementById(id).classList.add("ativa");
+}
 
-let pericias=[
-"Acrobacia","Furtividade","Luta","Pontaria",
-"Investigação","Ocultismo","Medicina","Diplomacia"
-];
+// 🎲 DADOS CUSTOM
+function rolarCustom(){
+let input = document.getElementById("customDice").value;
 
-let ataques=[];
-let status=[];
+let match = input.match(/(\d*)d(\d+)([+-]\d+)?/);
 
-// PERÍCIAS
-function carregarPericias(){
-let ul=document.getElementById("listaPericias");
+if(!match){
+resultadoDado.innerText="Formato inválido";
+return;
+}
 
-pericias.forEach(p=>{
-let li=document.createElement("li");
-li.textContent=p+" (0)";
-ul.appendChild(li);
+let qtd = match[1] || 1;
+let lados = match[2];
+let mod = parseInt(match[3]) || 0;
+
+let total=0;
+
+for(let i=0;i<qtd;i++){
+total+=Math.floor(Math.random()*lados)+1;
+}
+
+total+=mod;
+
+resultadoDado.innerText="Resultado: "+total;
+}
+
+// 🗺️ MAPA (OWLBEAR STYLE)
+const canvas = document.getElementById("mapa");
+const ctx = canvas.getContext("2d");
+
+let objetos=[];
+
+canvas.addEventListener("click",(e)=>{
+let x=e.offsetX;
+let y=e.offsetY;
+
+objetos.push({x,y});
+
+desenhar();
+});
+
+function desenhar(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+objetos.forEach(o=>{
+ctx.fillStyle="red";
+ctx.beginPath();
+ctx.arc(o.x,o.y,10,0,Math.PI*2);
+ctx.fill();
 });
 }
 
-// BARRAS
-function atualizarBarras(){
-vidaBar.style.width=vida+"%";
-sanBar.style.width=san+"%";
-esfBar.style.width=esforco+"%";
+// DRAG (mover tokens)
+let selecionado=null;
+
+canvas.addEventListener("mousedown",(e)=>{
+objetos.forEach(o=>{
+let dist = Math.hypot(o.x-e.offsetX,o.y-e.offsetY);
+if(dist<10) selecionado=o;
+});
+});
+
+canvas.addEventListener("mousemove",(e)=>{
+if(selecionado){
+selecionado.x=e.offsetX;
+selecionado.y=e.offsetY;
+desenhar();
 }
+});
 
-// ATAQUES
-function criarAtaque(){
-let nome=document.getElementById("nomeAtk").value;
-let dano=document.getElementById("danoAtk").value;
-let custo=document.getElementById("custoAtk").value;
-
-let atk={nome,dano,custo};
-ataques.push(atk);
-
-let li=document.createElement("li");
-li.textContent=`${nome} | ${dano} dano | ${custo} custo`;
-li.onclick=()=>usarAtaque(atk);
-
-document.getElementById("listaAtaques").appendChild(li);
-}
-
-function usarAtaque(atk){
-esforco-=atk.custo;
-vida-=Math.random()*5;
-
-adicionarStatus("Sangramento");
-
-atualizarBarras();
-}
-
-// STATUS
-function adicionarStatus(s){
-status.push(s);
-
-let li=document.createElement("li");
-li.textContent=s;
-
-document.getElementById("statusLista").appendChild(li);
-}
-
-// EVENTOS
-setInterval(()=>{
-if(status.includes("Sangramento")){
-vida-=1;
-}
-
-if(status.includes("Medo")){
-san-=1;
-}
-
-if(status.includes("Insanidade")){
-san-=2;
-}
-
-atualizarBarras();
-},1000);
-
-// INIT
-carregarPericias();
-atualizarBarras();
+canvas.addEventListener("mouseup",()=>{
+selecionado=null;
+});
