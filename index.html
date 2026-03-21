@@ -1,75 +1,203 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>RPG</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grimório RPG</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="background-glow background-glow--left"></div>
+  <div class="background-glow background-glow--right"></div>
 
-<header>
-  <h1>🕯️ Sistema RPG</h1>
-  <nav>
-    <button onclick="trocarAba('ficha')">Ficha</button>
-    <button onclick="trocarAba('dados')">Dados</button>
-  </nav>
-</header>
+  <div class="app-shell">
+    <header class="hero">
+      <div class="hero__copy">
+        <p class="eyebrow">Arquivo do aventureiro</p>
+        <h1>Grimório do Destino</h1>
+        <p class="hero__text">
+          Organize sua ficha, acompanhe seus atributos e convoque os dados para decidir os próximos passos da jornada.
+        </p>
+      </div>
 
-<main>
+      <div class="hero__meta">
+        <div class="meta-card">
+          <span>Ambiente</span>
+          <strong>Fantasia sombria</strong>
+        </div>
+        <div class="meta-card">
+          <span>Foco</span>
+          <strong>Ficha e rolagens</strong>
+        </div>
+      </div>
 
-<section id="ficha" class="aba ativa">
+      <nav class="tabs" aria-label="Seções do sistema RPG">
+        <button class="tab-button active" type="button" data-tab-target="ficha">Ficha</button>
+        <button class="tab-button" type="button" data-tab-target="dados">Dados</button>
+      </nav>
+    </header>
 
-  <h2>Ficha de Personagem</h2>
+    <main class="content">
+      <section id="ficha" class="tab-panel active" aria-labelledby="titulo-ficha">
+        <div class="section-heading">
+          <p class="eyebrow">Registro vivo</p>
+          <h2 id="titulo-ficha">Ficha de Personagem</h2>
+          <p>Monte o perfil do herói e deixe o painel abaixo refletir a presença do seu personagem.</p>
+        </div>
 
-  <div class="grid">
-    <input id="nome" placeholder="Nome">
-    <input id="classe" placeholder="Classe">
-    <input id="raca" placeholder="Raça">
-    <input id="nivel" type="number" value="1">
+        <form id="fichaForm" class="sheet">
+          <div class="field-grid field-grid--top">
+            <label class="field">
+              <span>Nome</span>
+              <input id="nome" type="text" placeholder="Ex.: Elyra da Névoa">
+            </label>
+
+            <label class="field">
+              <span>Classe</span>
+              <input id="classe" type="text" placeholder="Ex.: Guardiã Arcana">
+            </label>
+
+            <label class="field">
+              <span>Raça</span>
+              <input id="raca" type="text" placeholder="Ex.: Humana, elfo, anão...">
+            </label>
+
+            <label class="field">
+              <span>Nível</span>
+              <input id="nivel" type="number" min="1" value="1">
+            </label>
+          </div>
+
+          <div class="sheet-columns">
+            <section class="card">
+              <div class="card__header">
+                <h3>Atributos</h3>
+                <p>Os números abaixo moldam a força do seu destino.</p>
+              </div>
+
+              <div class="attribute-grid">
+                <label class="attribute-field">
+                  <span>FOR</span>
+                  <input id="for" type="number" placeholder="0">
+                </label>
+
+                <label class="attribute-field">
+                  <span>DES</span>
+                  <input id="des" type="number" placeholder="0">
+                </label>
+
+                <label class="attribute-field">
+                  <span>CON</span>
+                  <input id="con" type="number" placeholder="0">
+                </label>
+
+                <label class="attribute-field">
+                  <span>INT</span>
+                  <input id="int" type="number" placeholder="0">
+                </label>
+
+                <label class="attribute-field">
+                  <span>SAB</span>
+                  <input id="sab" type="number" placeholder="0">
+                </label>
+
+                <label class="attribute-field">
+                  <span>CAR</span>
+                  <input id="car" type="number" placeholder="0">
+                </label>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card__header">
+                <h3>Equipamento e Essência</h3>
+                <p>Defina como seu personagem enfrenta o mundo.</p>
+              </div>
+
+              <div class="field-grid">
+                <label class="field">
+                  <span>Arma principal</span>
+                  <input id="arma" type="text" placeholder="Ex.: Espada rúnica">
+                </label>
+
+                <label class="field">
+                  <span>Armadura</span>
+                  <input id="armadura" type="text" placeholder="Ex.: Couraça lunar">
+                </label>
+
+                <label class="field">
+                  <span>Item 1</span>
+                  <input id="item1" type="text" placeholder="Ex.: Poção rubra">
+                </label>
+
+                <label class="field">
+                  <span>Item 2</span>
+                  <input id="item2" type="text" placeholder="Ex.: Amuleto antigo">
+                </label>
+              </div>
+
+              <label class="field field--full">
+                <span>Habilidade especial</span>
+                <textarea id="habilidade" placeholder="Descreva o talento que torna esse personagem memorável."></textarea>
+              </label>
+            </section>
+          </div>
+
+          <div class="sheet-actions">
+            <button class="button button--primary" type="button" id="calcularBtn">Atualizar status</button>
+            <button class="button button--ghost" type="button" id="limparBtn">Limpar ficha</button>
+          </div>
+        </form>
+
+        <section class="result-panel" id="resultado" aria-live="polite">
+          <div class="empty-state">
+            <p class="eyebrow">Aguardando sinais</p>
+            <h3>Os status do aventureiro aparecerão aqui.</h3>
+            <p>Preencha a ficha para revelar um painel mais vivo e imersivo do personagem.</p>
+          </div>
+        </section>
+      </section>
+
+      <section id="dados" class="tab-panel" aria-labelledby="titulo-dados">
+        <div class="section-heading">
+          <p class="eyebrow">Oráculo</p>
+          <h2 id="titulo-dados">Rolador de Dados</h2>
+          <p>Escolha o dado da vez e acompanhe os presságios recentes da sua aventura.</p>
+        </div>
+
+        <div class="dice-layout">
+          <div class="dice-buttons">
+            <button class="die-button" type="button" data-lados="4">d4</button>
+            <button class="die-button" type="button" data-lados="6">d6</button>
+            <button class="die-button" type="button" data-lados="8">d8</button>
+            <button class="die-button" type="button" data-lados="10">d10</button>
+            <button class="die-button" type="button" data-lados="12">d12</button>
+            <button class="die-button" type="button" data-lados="20">d20</button>
+            <button class="die-button" type="button" data-lados="100">d100</button>
+          </div>
+
+          <div class="dice-stage">
+            <div class="dice-stage__ring"></div>
+            <p class="eyebrow">Último presságio</p>
+            <div class="dice-result" id="resultadoDadoNumero">--</div>
+            <p class="dice-description" id="resultadoDadoTexto">Escolha um dado para ouvir o destino.</p>
+          </div>
+        </div>
+
+        <section class="history-card">
+          <div class="card__header">
+            <h3>Histórico recente</h3>
+            <p>As últimas rolagens permanecem registradas por aqui.</p>
+          </div>
+
+          <ul class="history-list" id="historicoDados">
+            <li class="history-list__empty">Nenhuma rolagem realizada ainda.</li>
+          </ul>
+        </section>
+      </section>
+    </main>
   </div>
 
-  <h3>Atributos</h3>
-
-  <div class="grid">
-    <input id="for" type="number" placeholder="FOR">
-    <input id="des" type="number" placeholder="DES">
-    <input id="con" type="number" placeholder="CON">
-    <input id="int" type="number" placeholder="INT">
-    <input id="sab" type="number" placeholder="SAB">
-    <input id="car" type="number" placeholder="CAR">
-  </div>
-
-  <h3>Equipamento</h3>
-
-  <div class="grid">
-    <input id="arma" placeholder="Arma principal">
-    <input id="armadura" placeholder="Armadura">
-    <input id="item1" placeholder="Item 1">
-    <input id="item2" placeholder="Item 2">
-  </div>
-
-  <textarea id="habilidade" placeholder="Habilidade Especial"></textarea>
-
-  <button onclick="calcular()">Calcular</button>
-
-  <div id="resultado"></div>
-
-</section>
-
-<section id="dados" class="aba">
-
-  <h2>Rolador de Dados</h2>
-
-  <button onclick="rolar(6)">d6</button>
-  <button onclick="rolar(20)">d20</button>
-  <button onclick="rolar(100)">d100</button>
-
-  <h3 id="resultadoDado"></h3>
-
-</section>
-
-</main>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
