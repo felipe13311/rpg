@@ -1,134 +1,197 @@
+// ===== SOCKET =====
+const socket = io();
+
 // ===== NAVEGAÇÃO =====
 function abrir(id){
 document.querySelectorAll(".tela").forEach(t=>t.classList.remove("ativa"));
 document.getElementById(id).classList.add("ativa");
 }
 
-// ===== AGENTES =====
+// ===== DADOS =====
 let agentes = JSON.parse(localStorage.getItem("agentes")) || [];
+let agenteAtual = null;
+
+// ===== ROLAGEM =====
+function rolarDado(){
+let formula = document.getElementById("formulaDado").value.toLowerCase();
+let match = formula.match(/(\d+)d(\d+)([+-]\d+)?/);
+
+if(!match) return alert("Use: 1d20+5");
+
+let qtd = +match[1];
+let faces = +match[2];
+let bonus = +(match[3] || 0);
+
+let total = 0;
+let rolls = [];
+
+for(let i=0;i<qtd;i++){
+let r = Math.floor(Math.random()*faces)+1;
+rolls.push(r);
+total += r;
+}
+
+total += bonus;
+
+logRolagens.innerHTML += `<p>🎲 ${formula}: [${rolls}] = ${total}</p>`;
+socket.emit("ataque", total);
+}
+
+socket.on("receberAtaque",(dano)=>{
+logRolagens.innerHTML += `<p style="color:orange">🔥 Dano recebido: ${dano}</p>`;
+});
+
+// ===== AGENTES =====
+function criarAgente(){
+let nome = nomeAgente.value;
+let classe = classeAgente.value;
+
+if(!nome) return;
+
+agentes.push({nome,classe,ficha:{}});
+salvarAgentes();
+renderAgentes();
+}
 
 function renderAgentes(){
-let tabela = document.getElementById("tabelaAgentes");
-tabela.innerHTML="";
+listaAgentes.innerHTML="";
 
-agentes.forEach(a=>{
-let tr=document.createElement("tr");
-tr.innerHTML=`<td>${a.nome}</td><td>${a.classe}</td><td>${a.role}</td>`;
-tabela.appendChild(tr);
+agentes.forEach((a,i)=>{
+let li = document.createElement("li");
+
+li.innerHTML = `
+${a.nome} (${a.classe})
+<button onclick="abrirFicha(${i})">Abrir</button>
+`;
+
+listaAgentes.appendChild(li);
 });
+}
+
+function abrirFicha(i){
+agenteAtual = i;
+abrir("fichaAgente");
+
+let a = agentes[i];
+tituloFicha.innerText = a.nome;
+
+forca.value = a.ficha.forca || "";
+agilidade.value = a.ficha.agilidade || "";
+intelecto.value = a.ficha.intelecto || "";
+vida.value = a.ficha.vida || "";
+
+mostrarFichaAgente();
+}
+
+function salvarFichaAgente(){
+let a = agentes[agenteAtual];
+
+a.ficha = {
+forca: forca.value,
+agilidade: agilidade.value,
+intelecto: intelecto.value,
+vida: vida.value
+};
+
+salvarAgentes();
+mostrarFichaAgente();
+}
+
+function mostrarFichaAgente(){
+let a = agentes[agenteAtual];
+
+viewFicha.innerHTML = `
+<p>FOR: ${a.ficha.forca}</p>
+<p>AGI: ${a.ficha.agilidade}</p>
+<p>INT: ${a.ficha.intelecto}</p>
+<p>HP: ${a.ficha.vida}</p>
+`;
+}
+
+function salvarAgentes(){
+localStorage.setItem("agentes",JSON.stringify(agentes));
+}
+
+// ===== FICHA PLAYER =====
+function salvarFicha(){
+let ficha = {
+nome: nomeFicha.value,
+classe: classeFicha.value,
+hp: hpFicha.value
+};
+
+localStorage.setItem("ficha",JSON.stringify(ficha));
+mostrarFicha();
+}
+
+function mostrarFicha(){
+let f = JSON.parse(localStorage.getItem("ficha"));
+if(!f) return;
+
+previewFicha.innerHTML = `
+<h3>${f.nome}</h3>
+<p>${f.classe}</p>
+<p>HP: ${f.hp}</p>
+`;
 }
 
 // ===== CAMPANHAS =====
 let campanhas = JSON.parse(localStorage.getItem("campanhas")) || [];
 
 function criarCampanha(){
-let nome = nomeCampanha.value;
-
-campanhas.push({nome,mapa:[]});
-salvarCampanhas();
+campanhas.push({nome:nomeCampanha.value});
+localStorage.setItem("campanhas",JSON.stringify(campanhas));
 renderCampanhas();
-renderTabelaCampanhas();
 }
 
 function renderCampanhas(){
 listaCampanhas.innerHTML="";
-
-campanhas.forEach((c,i)=>{
+campanhas.forEach(c=>{
 let li=document.createElement("li");
-
-li.innerHTML=`
-${c.nome}
-<button onclick="editarCampanha(${i})">✏️</button>
-`;
-
+li.innerText = c.nome;
 listaCampanhas.appendChild(li);
 });
-}
-
-function renderTabelaCampanhas(){
-tabelaCampanhas.innerHTML="";
-
-campanhas.forEach((c,i)=>{
-let tr=document.createElement("tr");
-tr.innerHTML=`<td>${c.nome}</td><td><button onclick="editarCampanha(${i})">Editar</button></td>`;
-tabelaCampanhas.appendChild(tr);
-});
-}
-
-function editarCampanha(i){
-let novo = prompt("Novo nome:",campanhas[i].nome);
-
-if(novo){
-campanhas[i].nome=novo;
-salvarCampanhas();
-renderCampanhas();
-renderTabelaCampanhas();
-}
-}
-
-function salvarCampanhas(){
-localStorage.setItem("campanhas",JSON.stringify(campanhas));
-}
-
-// ===== FICHA =====
-function salvarFicha(){
-let file = gifFicha.files[0];
-
-if(file){
-let reader = new FileReader();
-
-reader.onload=()=>{
-let ficha={
-nome:nomeFicha.value,
-classe:classeFicha.value,
-hp:hpFicha.value,
-img:reader.result
-};
-
-localStorage.setItem("ficha",JSON.stringify(ficha));
-mostrarFicha();
-};
-
-reader.readAsDataURL(file);
-
-}else{
-let ficha={
-nome:nomeFicha.value,
-classe:classeFicha.value,
-hp:hpFicha.value
-};
-
-localStorage.setItem("ficha",JSON.stringify(ficha));
-mostrarFicha();
-}
-}
-
-function mostrarFicha(){
-let f = JSON.parse(localStorage.getItem("ficha"));
-
-if(!f) return;
-
-previewFicha.innerHTML=`
-<h3>${f.nome}</h3>
-<p>${f.classe}</p>
-<p>HP: ${f.hp}</p>
-<img src="${f.img||''}">
-`;
 }
 
 // ===== MAPA =====
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
+let tokens = [];
+let dragging = null;
+
 canvas.addEventListener("click", e=>{
-ctx.fillStyle="red";
+tokens.push({x:e.offsetX,y:e.offsetY});
+draw();
+});
+
+canvas.addEventListener("mousedown", e=>{
+tokens.forEach(t=>{
+if(Math.hypot(t.x-e.offsetX,t.y-e.offsetY)<10) dragging=t;
+});
+});
+
+canvas.addEventListener("mousemove", e=>{
+if(dragging){
+dragging.x=e.offsetX;
+dragging.y=e.offsetY;
+draw();
+}
+});
+
+canvas.addEventListener("mouseup", ()=>dragging=null);
+
+function draw(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+tokens.forEach(t=>{
 ctx.beginPath();
-ctx.arc(e.offsetX,e.offsetY,10,0,Math.PI*2);
+ctx.arc(t.x,t.y,10,0,Math.PI*2);
+ctx.fillStyle="red";
 ctx.fill();
 });
+}
 
 // INIT
 renderAgentes();
 renderCampanhas();
-renderTabelaCampanhas();
 mostrarFicha();
