@@ -7,12 +7,15 @@
 </head>
 <body>
 
-<!-- MENU PRINCIPAL -->
+<script src="/socket.io/socket.io.js"></script>
+
+<!-- MENU -->
 <section id="menu" class="tela ativa">
 <h1>BLOOD MOON</h1>
 
 <div class="menuBox">
 <button onclick="abrir('dashboard')">Dashboard</button>
+<button onclick="abrir('agentes')">Agentes</button>
 <button onclick="abrir('ficha')">Minha Ficha</button>
 <button onclick="abrir('campanhas')">Campanhas</button>
 <button onclick="abrir('mapa')">Mapa</button>
@@ -21,25 +24,47 @@
 
 <!-- DASHBOARD -->
 <section id="dashboard" class="tela">
-<button class="voltar" onclick="abrir('menu')">← Voltar</button>
+<button class="voltar" onclick="abrir('menu')">←</button>
 
-<h2>Agentes</h2>
-<table>
-<thead><tr><th>Nome</th><th>Classe</th><th>Role</th></tr></thead>
-<tbody id="tabelaAgentes"></tbody>
-</table>
+<h2>🎲 Rolagens</h2>
+<input id="formulaDado" placeholder="1d20+5">
+<button onclick="rolarDado()">Rolar</button>
 
-<h2>Campanhas</h2>
-<table>
-<thead><tr><th>Nome</th><th>Ação</th></tr></thead>
-<tbody id="tabelaCampanhas"></tbody>
-</table>
-
+<div id="logRolagens"></div>
 </section>
 
-<!-- FICHA -->
+<!-- AGENTES -->
+<section id="agentes" class="tela">
+<button class="voltar" onclick="abrir('menu')">←</button>
+
+<h2>Agentes</h2>
+
+<input id="nomeAgente" placeholder="Nome">
+<input id="classeAgente" placeholder="Classe">
+<button onclick="criarAgente()">Criar</button>
+
+<ul id="listaAgentes"></ul>
+</section>
+
+<!-- FICHA INDIVIDUAL -->
+<section id="fichaAgente" class="tela">
+<button class="voltar" onclick="abrir('agentes')">←</button>
+
+<h2 id="tituloFicha"></h2>
+
+<input id="forca" placeholder="Força">
+<input id="agilidade" placeholder="Agilidade">
+<input id="intelecto" placeholder="Intelecto">
+<input id="vida" placeholder="HP">
+
+<button onclick="salvarFichaAgente()">Salvar</button>
+
+<div id="viewFicha"></div>
+</section>
+
+<!-- FICHA PLAYER -->
 <section id="ficha" class="tela">
-<button class="voltar" onclick="abrir('menu')">← Voltar</button>
+<button class="voltar" onclick="abrir('menu')">←</button>
 
 <h2>Minha Ficha</h2>
 
@@ -47,17 +72,14 @@
 <input id="classeFicha" placeholder="Classe">
 <input id="hpFicha" placeholder="HP">
 
-<input type="file" id="gifFicha">
-
 <button onclick="salvarFicha()">Salvar</button>
 
 <div id="previewFicha"></div>
-
 </section>
 
 <!-- CAMPANHAS -->
 <section id="campanhas" class="tela">
-<button class="voltar" onclick="abrir('menu')">← Voltar</button>
+<button class="voltar" onclick="abrir('menu')">←</button>
 
 <h2>Campanhas</h2>
 
@@ -65,17 +87,14 @@
 <button onclick="criarCampanha()">Criar</button>
 
 <ul id="listaCampanhas"></ul>
-
 </section>
 
 <!-- MAPA -->
 <section id="mapa" class="tela">
-<button class="voltar" onclick="abrir('menu')">← Voltar</button>
+<button class="voltar" onclick="abrir('menu')">←</button>
 
 <h2>Mapa</h2>
-
 <canvas id="canvas" width="800" height="400"></canvas>
-
 </section>
 
 <script src="script.js"></script>
