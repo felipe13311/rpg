@@ -11,13 +11,9 @@ io.on("connection", (socket) => {
     socket.on("roll", (data) => {
         socket.broadcast.emit("roll", data);
     });
-
-    socket.on("ataque", (dano) => {
-        socket.broadcast.emit("receberAtaque", dano);
-    });
 });
 
-// 🔥 PORTA MÁGICA DO RAILWAY (OBRIGATÓRIO)
+// 🔥 LINHA OBRIGATÓRIA PRO RAILWAY
 const PORT = process.env.PORT || 3000;
 http.listen(PORT, () => {
     console.log(`🌕 BLOOD MOON VTT ONLINE NA PORTA ${PORT} - Facility da Ordem ativada!`);
