@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Meu RPG</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <h1>🕯️ Meu RPG</h1>
+    <nav>
+      <button onclick="mostrar('inicio')">Início</button>
+      <button onclick="mostrar('fichas')">Fichas</button>
+      <button onclick="mostrar('bestiario')">Bestiário</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="inicio">
+      <h2>Bem-vindo</h2>
+      <p>Seu mundo começa aqui...</p>
+    </section>
+
+    <section id="fichas" class="hidden">
+      <h2>Ficha de Personagem</h2>
+      <input id="nome" placeholder="Nome">
+      <input id="forca" type="number" placeholder="Força">
+      <button onclick="salvarFicha()">Salvar</button>
+
+      <div id="listaFichas"></div>
+    </section>
+
+    <section id="bestiario" class="hidden">
+      <h2>Bestiário</h2>
+      <input id="criatura" placeholder="Nome da criatura">
+      <button onclick="addCriatura()">Adicionar</button>
+
+      <ul id="listaCriaturas"></ul>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
