@@ -6,41 +6,39 @@ font-family:Arial;
 
 .navbar{
 display:flex;
-gap:20px;
+gap:15px;
 padding:10px;
 border-bottom:2px solid red;
 }
 
-span{cursor:pointer;}
-
-input,button,select{
+button{
 background:#1a0000;
 border:1px solid red;
 color:white;
 padding:5px;
-margin:5px;
+cursor:pointer;
 }
 
 button:hover{
 background:red;
-color:black;
+}
+
+input{
+background:#1a0000;
+border:1px solid red;
+color:white;
+margin:5px;
 }
 
 .pagina{display:none;}
 .ativa{display:block;}
 
-ul{list-style:none;}
-
 .chat{
 border:1px solid red;
-width:300px;
 height:200px;
 overflow:auto;
 }
 
-#chatBox{height:150px;overflow:auto;}
-
 canvas{
 border:2px solid red;
-margin-top:10px;
 }
