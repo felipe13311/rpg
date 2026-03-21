@@ -1,192 +1,180 @@
-// ===== FIREBASE BASE (CONFIGURE DEPOIS) =====
-const firebaseConfig = {
-  apiKey: "SUA_KEY",
-  authDomain: "SEU_APP.firebaseapp.com",
-  projectId: "SEU_APP"
-};
+// ===== LOGIN =====
+let usuario = localStorage.getItem("user");
 
-// ===== USUÁRIO =====
-let usuarioAtual = localStorage.getItem("user");
+function login(){
+if(user.value && pass.value){
+localStorage.setItem("user",user.value);
+usuario=user.value;
+ir("dashboard");
+}
+}
+
+function logout(){
+localStorage.clear();
+location.reload();
+}
+
+// ===== NAVEGAÇÃO =====
+function ir(id){
+document.querySelectorAll(".pagina").forEach(p=>p.classList.remove("ativa"));
+document.getElementById(id).classList.add("ativa");
+}
 
 // ===== AGENTES =====
 let agentes = JSON.parse(localStorage.getItem("agentes")) || [];
 
+function renderAgentes(){
+tabelaAgentes.innerHTML="";
+
+agentes.forEach(a=>{
+let tr=document.createElement("tr");
+tr.innerHTML=`<td>${a.nome}</td><td>${a.classe}</td><td>${a.role}</td>`;
+tabelaAgentes.appendChild(tr);
+});
+}
+
+// ===== FICHA PRIVADA =====
+function salvarFicha(){
+
+let file = gifFicha.files[0];
+
+if(file){
+let reader = new FileReader();
+reader.onload=()=>{
+let ficha={
+nome:nomeFicha.value,
+classe:classeFicha.value,
+hp:hpFicha.value,
+img:reader.result
+};
+
+localStorage.setItem("ficha_"+usuario,JSON.stringify(ficha));
+mostrarFicha();
+};
+reader.readAsDataURL(file);
+
+}else{
+
+let ficha={
+nome:nomeFicha.value,
+classe:classeFicha.value,
+hp:hpFicha.value
+};
+
+localStorage.setItem("ficha_"+usuario,JSON.stringify(ficha));
+mostrarFicha();
+}
+}
+
+function mostrarFicha(){
+let f = JSON.parse(localStorage.getItem("ficha_"+usuario));
+
+if(!f) return;
+
+previewFicha.innerHTML=`
+<h3>${f.nome}</h3>
+<p>${f.classe}</p>
+<p>HP: ${f.hp}</p>
+<img src="${f.img||''}">
+`;
+}
+
 // ===== CAMPANHAS =====
 let campanhas = JSON.parse(localStorage.getItem("campanhas")) || [];
-let atual = null;
 
-// ===== MAPA =====
-const canvas = document.getElementById("mapa");
-const ctx = canvas.getContext("2d");
+function criarCampanha(){
+let nome = nomeCampanha.value;
 
-let selected = null;
-
-// ===== INICIATIVA =====
-function rolarIniciativa(){
-let ordem = campanhas[atual].mapa;
-
-ordem.forEach(t=>{
-let agi = t.agi || 0;
-t.iniciativa = Math.floor(Math.random()*20)+1 + agi;
-});
-
-ordem.sort((a,b)=>b.iniciativa-a.iniciativa);
-
-campanhas[atual].turno = 0;
+campanhas.push({nome,mapa:[]});
 salvarCampanhas();
-
-alert("Iniciativa rolada!");
+renderCampanhas();
+renderTabelaCampanhas();
 }
 
-// ===== TURNOS =====
-function proximoTurno(){
-let lista = campanhas[atual].mapa;
+function renderCampanhas(){
+listaCampanhas.innerHTML="";
 
-if(lista.length===0) return;
+campanhas.forEach((c,i)=>{
+let li=document.createElement("li");
 
-campanhas[atual].turno++;
-let turno = campanhas[atual].turno % lista.length;
+li.innerHTML=`
+${c.nome}
+<button onclick="editarCampanha(${i})">Editar</button>
+<button onclick="abrirMapa(${i})">Abrir</button>
+`;
 
-turnoAtual.innerText = "Turno: "+lista[turno].nome;
+listaCampanhas.appendChild(li);
+});
 }
 
-// ===== TOKENS =====
-canvas.addEventListener("dblclick", e=>{
-let nome = prompt("Nome");
-let hp = 20;
-let agi = parseInt(prompt("AGI")) || 0;
+function renderTabelaCampanhas(){
+tabelaCampanhas.innerHTML="";
+
+campanhas.forEach((c,i)=>{
+let tr=document.createElement("tr");
+
+tr.innerHTML=`
+<td>${c.nome}</td>
+<td><button onclick="editarCampanha(${i})">✏️</button></td>
+`;
+
+tabelaCampanhas.appendChild(tr);
+});
+}
+
+function editarCampanha(i){
+let novo = prompt("Novo nome:",campanhas[i].nome);
+if(novo){
+campanhas[i].nome=novo;
+salvarCampanhas();
+renderCampanhas();
+renderTabelaCampanhas();
+}
+}
+
+function salvarCampanhas(){
+localStorage.setItem("campanhas",JSON.stringify(campanhas));
+}
+
+// ===== MAPA (OWLBEAR SIMPLES) =====
+const canvas=document.getElementById("mapa");
+const ctx=canvas.getContext("2d");
+
+let atual=null;
+
+function abrirMapa(i){
+atual=i;
+ir("owlbear");
+desenhar();
+}
+
+canvas.addEventListener("click",e=>{
+if(atual===null) return;
 
 campanhas[atual].mapa.push({
 x:e.offsetX,
-y:e.offsetY,
-nome,
-hp,
-maxHp:hp,
-agi,
-status:[],
-owner:usuarioAtual
+y:e.offsetY
 });
 
 salvarCampanhas();
 desenhar();
 });
 
-// ===== DRAG COM PERMISSÃO =====
-canvas.addEventListener("mousedown", e=>{
-let x=e.offsetX,y=e.offsetY;
-
-campanhas[atual]?.mapa.forEach(t=>{
-if(Math.hypot(t.x-x,t.y-y)<10){
-
-// PERMISSÃO
-if(t.owner === usuarioAtual || isMestre()){
-selected=t;
-}
-
-}
-});
-});
-
-canvas.addEventListener("mousemove", e=>{
-if(selected){
-selected.x=e.offsetX;
-selected.y=e.offsetY;
-desenhar();
-}
-});
-
-canvas.addEventListener("mouseup", ()=>selected=null);
-
-// ===== STATUS =====
-function aplicarStatus(token, tipo){
-token.status.push(tipo);
-}
-
-// ===== DESENHO =====
 function desenhar(){
 ctx.clearRect(0,0,800,400);
 
 if(atual===null) return;
 
 campanhas[atual].mapa.forEach(t=>{
-
-// TOKEN
 ctx.fillStyle="red";
 ctx.beginPath();
 ctx.arc(t.x,t.y,10,0,Math.PI*2);
 ctx.fill();
-
-// NOME
-ctx.fillStyle="white";
-ctx.fillText(t.nome,t.x-15,t.y-20);
-
-// HP BAR
-let largura = 30;
-let hpPercent = t.hp/t.maxHp;
-
-ctx.fillStyle="black";
-ctx.fillRect(t.x-15,t.y-15,largura,5);
-
-ctx.fillStyle="lime";
-ctx.fillRect(t.x-15,t.y-15,largura*hpPercent,5);
-
-// STATUS
-ctx.fillStyle="yellow";
-ctx.fillText(t.status.join(","),t.x-20,t.y+20);
-
 });
 }
 
-// ===== PERMISSÃO =====
-function isMestre(){
-return agentes.find(a=>a.nome===usuarioAtual)?.role === "mestre";
-}
-
-// ===== CHAT MELHORADO =====
-function enviarChat(){
-let msg = {
-user:usuarioAtual,
-texto:chatInput.value,
-hora:new Date().toLocaleTimeString()
-};
-
-campanhas[atual].chat.push(msg);
-salvarCampanhas();
-renderChat();
-}
-
-function renderChat(){
-chatBox.innerHTML="";
-
-campanhas[atual].chat.forEach(m=>{
-let p=document.createElement("p");
-p.innerHTML = `<b>${m.user}</b> [${m.hora}]: ${m.texto}`;
-chatBox.appendChild(p);
-});
-}
-
-// ===== DADOS LOG =====
-function rolarDado(){
-let input=diceInput.value;
-let match=input.match(/(\d*)d(\d+)([+-]\d+)?/);
-
-if(!match) return;
-
-let qtd=match[1]||1;
-let lados=match[2];
-let mod=parseInt(match[3])||0;
-
-let total=0;
-
-for(let i=0;i<qtd;i++){
-total+=Math.floor(Math.random()*lados)+1;
-}
-
-total+=mod;
-
-let log = `${usuarioAtual} rolou ${input} = ${total}`;
-
-let li=document.createElement("li");
-li.textContent=log;
-logDados.appendChild(li);
-}
+// ===== INIT =====
+renderAgentes();
+renderCampanhas();
+renderTabelaCampanhas();
+mostrarFicha();
