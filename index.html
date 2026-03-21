@@ -1,203 +1,99 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Grimório RPG</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>CRIS SYSTEM</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="background-glow background-glow--left"></div>
-  <div class="background-glow background-glow--right"></div>
 
-  <div class="app-shell">
-    <header class="hero">
-      <div class="hero__copy">
-        <p class="eyebrow">Arquivo do aventureiro</p>
-        <h1>Grimório do Destino</h1>
-        <p class="hero__text">
-          Organize sua ficha, acompanhe seus atributos e convoque os dados para decidir os próximos passos da jornada.
-        </p>
-      </div>
+<header>
+<h1>CRIS SYSTEM</h1>
 
-      <div class="hero__meta">
-        <div class="meta-card">
-          <span>Ambiente</span>
-          <strong>Fantasia sombria</strong>
-        </div>
-        <div class="meta-card">
-          <span>Foco</span>
-          <strong>Ficha e rolagens</strong>
-        </div>
-      </div>
+<nav>
+<button onclick="trocarAba('ficha')">Ficha</button>
+<button onclick="trocarAba('inventario')">Inventário</button>
+<button onclick="trocarAba('dados')">Dados</button>
+<button onclick="trocarAba('combate')">Combate</button>
+<button onclick="abrirADM()">██</button>
+</nav>
+</header>
 
-      <nav class="tabs" aria-label="Seções do sistema RPG">
-        <button class="tab-button active" type="button" data-tab-target="ficha">Ficha</button>
-        <button class="tab-button" type="button" data-tab-target="dados">Dados</button>
-      </nav>
-    </header>
+<main>
 
-    <main class="content">
-      <section id="ficha" class="tab-panel active" aria-labelledby="titulo-ficha">
-        <div class="section-heading">
-          <p class="eyebrow">Registro vivo</p>
-          <h2 id="titulo-ficha">Ficha de Personagem</h2>
-          <p>Monte o perfil do herói e deixe o painel abaixo refletir a presença do seu personagem.</p>
-        </div>
+<section id="ficha" class="aba ativa">
+<input id="nome" placeholder="Nome">
+<input id="classe" placeholder="Classe">
+<input id="nivel" type="number" value="1">
 
-        <form id="fichaForm" class="sheet">
-          <div class="field-grid field-grid--top">
-            <label class="field">
-              <span>Nome</span>
-              <input id="nome" type="text" placeholder="Ex.: Elyra da Névoa">
-            </label>
+<input id="for" placeholder="FOR">
+<input id="des" placeholder="DES">
+<input id="con" placeholder="CON">
+<input id="int" placeholder="INT">
+<input id="sab" placeholder="SAB">
 
-            <label class="field">
-              <span>Classe</span>
-              <input id="classe" type="text" placeholder="Ex.: Guardiã Arcana">
-            </label>
+<select id="armadura">
+<option value="0">Sem armadura</option>
+<option value="2">Leve</option>
+<option value="4">Média</option>
+<option value="6">Pesada</option>
+</select>
 
-            <label class="field">
-              <span>Raça</span>
-              <input id="raca" type="text" placeholder="Ex.: Humana, elfo, anão...">
-            </label>
+<div class="barra"><div id="barraExs"></div></div>
 
-            <label class="field">
-              <span>Nível</span>
-              <input id="nivel" type="number" min="1" value="1">
-            </label>
-          </div>
+<button onclick="calcular()">Atualizar</button>
+<button onclick="salvarFicha()">Salvar</button>
 
-          <div class="sheet-columns">
-            <section class="card">
-              <div class="card__header">
-                <h3>Atributos</h3>
-                <p>Os números abaixo moldam a força do seu destino.</p>
-              </div>
+<div id="resultado"></div>
+</section>
 
-              <div class="attribute-grid">
-                <label class="attribute-field">
-                  <span>FOR</span>
-                  <input id="for" type="number" placeholder="0">
-                </label>
+<section id="inventario" class="aba">
 
-                <label class="attribute-field">
-                  <span>DES</span>
-                  <input id="des" type="number" placeholder="0">
-                </label>
+<h3>Drogas</h3>
+<button onclick="usarDroga('hemorred')">Hemorred</button>
+<button onclick="usarDroga('carmine')">Carmine</button>
+<button onclick="usarDroga('pulse')">Red Pulse</button>
 
-                <label class="attribute-field">
-                  <span>CON</span>
-                  <input id="con" type="number" placeholder="0">
-                </label>
+<h3>Itens</h3>
+<button onclick="addItem('Condensador')">Condensador</button>
+<button onclick="addItem('Ampola')">Ampola</button>
+<button onclick="addItem('Medalhão')">Medalhão</button>
 
-                <label class="attribute-field">
-                  <span>INT</span>
-                  <input id="int" type="number" placeholder="0">
-                </label>
+<ul id="listaItens"></ul>
+<div id="efeitos"></div>
 
-                <label class="attribute-field">
-                  <span>SAB</span>
-                  <input id="sab" type="number" placeholder="0">
-                </label>
+</section>
 
-                <label class="attribute-field">
-                  <span>CAR</span>
-                  <input id="car" type="number" placeholder="0">
-                </label>
-              </div>
-            </section>
+<section id="dados" class="aba">
+<button onclick="rolar(6)">d6</button>
+<button onclick="rolar(20)">d20</button>
+<button onclick="rolar(100)">d100</button>
+<h3 id="resultadoDado"></h3>
+</section>
 
-            <section class="card">
-              <div class="card__header">
-                <h3>Equipamento e Essência</h3>
-                <p>Defina como seu personagem enfrenta o mundo.</p>
-              </div>
+<section id="combate" class="aba">
 
-              <div class="field-grid">
-                <label class="field">
-                  <span>Arma principal</span>
-                  <input id="arma" type="text" placeholder="Ex.: Espada rúnica">
-                </label>
+<input id="hpPlayer" placeholder="HP Player">
+<input id="atkPlayer" placeholder="ATK Player">
 
-                <label class="field">
-                  <span>Armadura</span>
-                  <input id="armadura" type="text" placeholder="Ex.: Couraça lunar">
-                </label>
+<input id="hpEnemy" placeholder="HP Inimigo">
+<input id="atkEnemy" placeholder="ATK Inimigo">
 
-                <label class="field">
-                  <span>Item 1</span>
-                  <input id="item1" type="text" placeholder="Ex.: Poção rubra">
-                </label>
+<button onclick="iniciarCombate()">Iniciar Combate</button>
 
-                <label class="field">
-                  <span>Item 2</span>
-                  <input id="item2" type="text" placeholder="Ex.: Amuleto antigo">
-                </label>
-              </div>
+<div id="logCombate"></div>
 
-              <label class="field field--full">
-                <span>Habilidade especial</span>
-                <textarea id="habilidade" placeholder="Descreva o talento que torna esse personagem memorável."></textarea>
-              </label>
-            </section>
-          </div>
+</section>
 
-          <div class="sheet-actions">
-            <button class="button button--primary" type="button" id="calcularBtn">Atualizar status</button>
-            <button class="button button--ghost" type="button" id="limparBtn">Limpar ficha</button>
-          </div>
-        </form>
+<section id="criaturas" class="aba">
+<h2>ADM</h2>
+<ul id="listaCriaturas"></ul>
+<button onclick="interagirAnomalia()">Testar Anomalia</button>
+</section>
 
-        <section class="result-panel" id="resultado" aria-live="polite">
-          <div class="empty-state">
-            <p class="eyebrow">Aguardando sinais</p>
-            <h3>Os status do aventureiro aparecerão aqui.</h3>
-            <p>Preencha a ficha para revelar um painel mais vivo e imersivo do personagem.</p>
-          </div>
-        </section>
-      </section>
+</main>
 
-      <section id="dados" class="tab-panel" aria-labelledby="titulo-dados">
-        <div class="section-heading">
-          <p class="eyebrow">Oráculo</p>
-          <h2 id="titulo-dados">Rolador de Dados</h2>
-          <p>Escolha o dado da vez e acompanhe os presságios recentes da sua aventura.</p>
-        </div>
-
-        <div class="dice-layout">
-          <div class="dice-buttons">
-            <button class="die-button" type="button" data-lados="4">d4</button>
-            <button class="die-button" type="button" data-lados="6">d6</button>
-            <button class="die-button" type="button" data-lados="8">d8</button>
-            <button class="die-button" type="button" data-lados="10">d10</button>
-            <button class="die-button" type="button" data-lados="12">d12</button>
-            <button class="die-button" type="button" data-lados="20">d20</button>
-            <button class="die-button" type="button" data-lados="100">d100</button>
-          </div>
-
-          <div class="dice-stage">
-            <div class="dice-stage__ring"></div>
-            <p class="eyebrow">Último presságio</p>
-            <div class="dice-result" id="resultadoDadoNumero">--</div>
-            <p class="dice-description" id="resultadoDadoTexto">Escolha um dado para ouvir o destino.</p>
-          </div>
-        </div>
-
-        <section class="history-card">
-          <div class="card__header">
-            <h3>Histórico recente</h3>
-            <p>As últimas rolagens permanecem registradas por aqui.</p>
-          </div>
-
-          <ul class="history-list" id="historicoDados">
-            <li class="history-list__empty">Nenhuma rolagem realizada ainda.</li>
-          </ul>
-        </section>
-      </section>
-    </main>
-  </div>
-
-  <script src="script.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
