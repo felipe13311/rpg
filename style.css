@@ -1,31 +1,35 @@
 body{
-background:#080000;
-color:#ff3b3b;
+background:#050000;
+color:#ff2a2a;
 font-family:Arial;
 margin:0;
+text-align:center;
+}
+
+/* TELAS */
+.tela{
+display:none;
+padding:20px;
+}
+
+.ativa{
+display:block;
 }
 
 /* MENU */
-.menu{
+.menuBox{
 display:flex;
-gap:10px;
-padding:10px;
-background:#120000;
-border-bottom:2px solid red;
+flex-direction:column;
+gap:15px;
+width:200px;
+margin:auto;
 }
 
-.menu h1{
-margin-right:auto;
-color:red;
-text-shadow:0 0 10px red;
-}
-
-/* BOTÕES */
 button{
 background:#1a0000;
 border:1px solid red;
 color:white;
-padding:6px 10px;
+padding:10px;
 cursor:pointer;
 }
 
@@ -33,29 +37,34 @@ button:hover{
 background:red;
 }
 
-/* PÁGINAS */
-.pagina{display:none;}
-.ativa{display:block;}
+/* VOLTAR */
+.voltar{
+position:absolute;
+left:10px;
+top:10px;
+}
 
-/* TABELAS */
+/* TABELA */
 table{
-width:80%;
-margin:10px auto;
+margin:auto;
 border-collapse:collapse;
+width:70%;
 }
 
 th,td{
 border:1px solid red;
 padding:8px;
-text-align:center;
-}
-
-th{
-background:#200000;
 }
 
 /* FICHA */
 #previewFicha img{
-width:100px;
+width:120px;
+margin-top:10px;
 border:2px solid red;
+}
+
+/* MAPA */
+canvas{
+border:2px solid red;
+margin-top:20px;
 }
